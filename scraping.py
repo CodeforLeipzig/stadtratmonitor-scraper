@@ -40,12 +40,12 @@ def scrapping(db_con, start_url):
                 for director in node_paper.directors():
                     if isinstance(director.source, UnknownOparlNode) or isinstance(director.target, UnknownOparlNode):
                         continue
-                    r = session.write_transaction(create_relation, director)
+                    r = session.execute_write(create_relation, director)
                     pass
                 for originator in node_paper.originators():
                     if isinstance(originator.source, UnknownOparlNode) or isinstance(originator.target, UnknownOparlNode):
                         continue
-                    r = session.write_transaction(create_relation, originator)
+                    r = session.execute_write(create_relation, originator)
                     pass
 
 
