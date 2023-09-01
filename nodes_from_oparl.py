@@ -1,4 +1,5 @@
 from oparl_objects import BasicOparl as OparlBasic
+from oparl_objects import UnknownOparl as OparlUnknown
 from oparl_objects import Paper as OparlPaper
 from oparl_objects import Person as OparlPerson
 from oparl_objects import Organization as OparlOrganization
@@ -18,7 +19,7 @@ from nodes_scheme import \
 
 
 class UnknownOparlNode(AbcNodeInterface):
-    _content: OparlBasic
+    _content: OparlUnknown
     _labels = []
 
     @ATTRIBUTES.OPARL_ID.as_primary
@@ -26,12 +27,12 @@ class UnknownOparlNode(AbcNodeInterface):
         return self._content.oparl_id
 
 
-def converted_get_request(node: UnknownOparlNode):
-    url = node.oparl_id.value()
+def converted_get_request(o_obj: OparlUnknown):
+    url = o_obj.oparl_id
     response = request.get(url)
     if response.state == 200:
         content = json.loads(response.content)
-        return node_factory(oparl_factory(content))
+        return oparl_factory(content)
 
 
 class OparlPaperNode(AbcOparlPaperInterface):
@@ -64,16 +65,18 @@ class OparlPaperNode(AbcOparlPaperInterface):
     @RELATIONS.DIRECTED.as_generator
     def directors(self):
         for director in self._content.under_direction_of:
-            if isinstance(director, UnknownOparlNode):
+            if isinstance(director, OparlUnknown):
                 director = converted_get_request(director)
-            yield node_factory(director), self
+            if director:
+                yield node_factory(director), self
 
     @RELATIONS.SUBMITTED.as_generator
     def originators(self):
         for originator in self._content.originator_persons:
-            if isinstance(originator, UnknownOparlNode):
+            if isinstance(originator, OparlUnknown):
                 originator = converted_get_request(originator)
-            yield node_factory(originator), self
+            if originator:
+                yield node_factory(originator), self
 
 
     #_content.consultations
@@ -155,10 +158,11 @@ factory_mapping = {OparlPerson: OparlPersonNode,
                    OparlPaper: OparlPaperNode,
                    OparlOrganization: OparlOrganizationNode,
                    OparlLocation: OparlLocationNode,
-                   OparlBasic: UnknownOparlNode}
+                   OparlUnknown: UnknownOparlNode}
 
 
-def node_factory(oparl_obj):
-    assert isinstance(oparl_obj, OparlBasic)
-    node_cls = factory_mapping.get(oparl_obj.__class__)
+def node_factory(oparl_obj: OparlBasic):
+    oparl_cls = oparl_obj.__class__
+    assert issubclass(oparl_cls, OparlBasic)
+    node_cls = factory_mapping.get(oparl_cls)
     return node_cls(oparl_obj)

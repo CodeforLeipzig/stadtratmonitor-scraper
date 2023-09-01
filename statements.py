@@ -1,5 +1,5 @@
 from nodes_from_neo4j import node_factory as neo4j_node_factory
-from nodes_scheme import AbcNodeInterface, DbAttribute
+from nodes_scheme import AbcNodeInterface, DbAttribute, DbRelation
 
 
 def retrieve_single(tx, node):
@@ -20,6 +20,24 @@ def full_merge(tx, node):
     result = tx.run('\n'.join((match_, on_create, return_)), parameter)
     result = result.single().value()
     return neo4j_node_factory(result)
+
+def create_relation(tx, node: DbRelation):
+    s_ref, source = 'b', node.source
+    t_ref, target = 'a', node.target
+    r_ref = 'r'
+    merge_s, p1 = prepare_merge_by_primary(source, s_ref)
+    on_create_s, p2 = prepare_create_set(source, s_ref)
+    merge_t, p3 = prepare_merge_by_primary(target, t_ref)
+    on_create_t, p4 = prepare_create_set(target, t_ref)
+    merge_r, _ = f'MERGE ({s_ref}) - [{r_ref}:{node.relation_type}] -> ({t_ref})', {}
+    return_, _ = prepare_return(r_ref)
+
+    statement = '\n'.join([merge_s, on_create_s, merge_t, on_create_t, merge_r, return_])
+    parameter = {**p1, **p2, **p3, **p4}
+
+    result = tx.run(statement, parameter)
+    result = result.single().value()
+    return result #neo4j_node_factory(result)
 
 
 def delete_all(tx, *_):

@@ -66,6 +66,10 @@ class BasicOparl:
         return self._content.get('deleted')
 
 
+class UnknownOparl(BasicOparl):
+    pass
+
+
 class Paper(BasicOparl):
     @property
     def subject(self) -> str:
@@ -242,7 +246,7 @@ def oparl_factory(item: (str, dict)):
     if item is None:
         return
     elif isinstance(item, str) and item.startswith('http'):
-        return BasicOparl(dict(id=item))
+        return UnknownOparl(dict(id=item))
     elif isinstance(item, dict):
         object_type = item.get('type')
         assert object_type is not None
