@@ -98,7 +98,7 @@ class DbRelation:
     source: AbcNodeInterface
     target: AbcNodeInterface
 
-    def __init__(self, source, rel_type, target):
+    def __init__(self, rel_type, source, target):
         self.relation_type = rel_type
         self.source = source
         self.target = target
