@@ -1,48 +1,14 @@
-from typing import Generator
-from datetime import date, datetime
+from oparl.oparl_factory import Factory
 from re import findall
 
-
-def as_date_type(func):
-    def convert_date(*args) -> date:
-        date_str = func(*args)
-        return date.fromisoformat(date_str) if date_str else None
-
-    return convert_date
+as_oparl_object = Factory.as_oparl_object
+as_simple_generator = Factory.as_simple_generator
+as_oparl_object_generator = Factory.as_oparl_object_generator
+as_date_type = Factory.as_date_type
+as_datetime_type = Factory.as_datetime_type
 
 
-def as_datetime_type(func):
-    def convert_datetime(*args) -> date:
-        date_str = func(*args)
-        return datetime.fromisoformat(date_str) if date_str else None
-
-    return convert_datetime
-
-
-def as_simple_generator(func):
-    def generator(*args) -> Generator:
-        item = func(*args)
-        if isinstance(item, list):
-            for sub_item in item:
-                if sub_item:
-                    yield sub_item
-    return generator
-
-
-def as_oparl_object(func):
-    def oparl_object(*args):
-        return oparl_factory(func(*args))
-    return oparl_object
-
-
-def as_oparl_object_generator(func):
-    def oparl_object_generator(*args):
-        for item in as_simple_generator(func)(*args):
-            yield oparl_factory(item)
-    return oparl_object_generator
-
-
-class BasicOparl:
+class Basic:
     _content: dict
 
     def __init__(self, content: dict):
@@ -62,15 +28,11 @@ class BasicOparl:
         return self._content.get('modified')
 
     @property
-    def is_deleted(self):
-        return self._content.get('deleted')
+    def is_valid(self):
+        return self.oparl_type and self.oparl_id and not self._content.get('deleted')
 
 
-class UnknownOparl(BasicOparl):
-    pass
-
-
-class Paper(BasicOparl):
+class Paper(Basic):
     @property
     def subject(self) -> str:
         return self._content.get('name')
@@ -128,7 +90,7 @@ class Paper(BasicOparl):
         return self._content.get('web')
 
 
-class Person(BasicOparl):
+class Person(Basic):
     @property
     def name(self) -> str:
         return self._content.get('name')
@@ -157,7 +119,7 @@ class Person(BasicOparl):
         return self._content.get('membership')
 
 
-class Organization(BasicOparl):
+class Organization(Basic):
     @property
     def name(self) -> str:
         return self._content.get('name')
@@ -187,7 +149,7 @@ class Organization(BasicOparl):
         return self._content.get('membership')
 
 
-class Location(BasicOparl):
+class Location(Basic):
     @property
     def locality(self) -> str:
         return self._content.get('locality')
@@ -205,7 +167,7 @@ class Location(BasicOparl):
         return self._content.get('streetAddress')
 
 
-class Membership(BasicOparl):
+class Membership(Basic):
     @property
     @as_oparl_object
     def person(self) -> (str, dict):
@@ -233,25 +195,3 @@ class Membership(BasicOparl):
     @as_date_type
     def end_date(self):
         return self._content.get('endDate')
-
-
-fabric_dict = {"https://schema.oparl.org/1.1/Paper": Paper,
-               "https://schema.oparl.org/1.1/Person": Person,
-               "https://schema.oparl.org/1.1/Organization": Organization,
-               "https://schema.oparl.org/1.1/Location": Location,
-               "https://schema.oparl.org/1.1/Membership": Membership}
-
-
-def oparl_factory(item: (str, dict)):
-    if item is None:
-        return
-    elif isinstance(item, str) and item.startswith('http'):
-        return UnknownOparl(dict(id=item))
-    elif isinstance(item, dict):
-        object_type = item.get('type')
-        assert object_type is not None
-        oparl_object = fabric_dict.get(object_type)
-        return oparl_object(item)
-    else:
-        message = f'unsupported item {item} type {type(item)}, expected url_str or dict with key "type"'
-        raise TypeError(message)

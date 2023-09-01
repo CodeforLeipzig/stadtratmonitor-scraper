@@ -1,14 +1,8 @@
 from sqlite3 import connect
+import json
 
-DATABASE_NAME = './mirror/mirror.db'
+DATABASE_NAME = './mirror.db'
 START_URL = "https://ratsinformation.leipzig.de/allris_leipzig_public/oparl/papers?body=2387&page=1"
-
-
-class FakeResponse:
-    def __init__(self, state, content=None):
-        self.state = state
-        if content:
-            self.content = content
 
 
 def get(url):
@@ -16,6 +10,6 @@ def get(url):
         res = con.execute('SELECT data FROM mirror WHERE id=?', (url, ))
         data = res.fetchone()
         if data:
-            return FakeResponse(state=200, content=data[0])
+            return json.loads(data[0])
         else:
-            return FakeResponse(state=400)
+            return {'id': url, 'deleted': True}
