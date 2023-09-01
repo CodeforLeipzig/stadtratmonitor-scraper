@@ -1,12 +1,11 @@
-from oparl_objects import BasicOparl as OparlBasic
-from oparl_objects import UnknownOparl as OparlUnknown
-from oparl_objects import Paper as OparlPaper
-from oparl_objects import Person as OparlPerson
-from oparl_objects import Organization as OparlOrganization
-from oparl_objects import Location as OparlLocation
-from oparl_objects import oparl_factory as oparl_factory
-import fakerequest as request
-import json
+from oparl import \
+    Basic as OparlBasic, \
+    Paper as OparlPaper, \
+    Person as OparlPerson, \
+    Organization as OparlOrganization, \
+    Location as OparlLocation,\
+    Factory as OparlFactory
+
 
 from nodes_scheme import \
     RELATIONS, \
@@ -19,20 +18,12 @@ from nodes_scheme import \
 
 
 class UnknownOparlNode(AbcNodeInterface):
-    _content: OparlUnknown
+    _content: OparlBasic
     _labels = []
 
     @ATTRIBUTES.OPARL_ID.as_primary
     def oparl_id(self):
         return self._content.oparl_id
-
-
-def converted_get_request(o_obj: OparlUnknown):
-    url = o_obj.oparl_id
-    response = request.get(url)
-    if response.state == 200:
-        content = json.loads(response.content)
-        return oparl_factory(content)
 
 
 class OparlPaperNode(AbcOparlPaperInterface):
@@ -65,19 +56,16 @@ class OparlPaperNode(AbcOparlPaperInterface):
     @RELATIONS.DIRECTED.as_generator
     def directors(self):
         for director in self._content.under_direction_of:
-            if isinstance(director, OparlUnknown):
-                director = converted_get_request(director)
-            if director:
+            director: OparlBasic
+            if director.is_valid:
                 yield node_factory(director), self
 
     @RELATIONS.SUBMITTED.as_generator
     def originators(self):
         for originator in self._content.originator_persons:
-            if isinstance(originator, OparlUnknown):
-                originator = converted_get_request(originator)
-            if originator:
+            originator: OparlBasic
+            if originator.is_valid:
                 yield node_factory(originator), self
-
 
     #_content.consultations
 
@@ -158,7 +146,7 @@ factory_mapping = {OparlPerson: OparlPersonNode,
                    OparlPaper: OparlPaperNode,
                    OparlOrganization: OparlOrganizationNode,
                    OparlLocation: OparlLocationNode,
-                   OparlUnknown: UnknownOparlNode}
+                   OparlBasic: UnknownOparlNode}
 
 
 def node_factory(oparl_obj: OparlBasic):
