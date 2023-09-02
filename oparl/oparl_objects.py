@@ -195,3 +195,25 @@ class Membership(Basic):
     @as_date_type
     def end_date(self):
         return self._content.get('endDate')
+
+
+class Consultation(Basic):
+    # 'meeting'
+    # 'agendaItem'
+    @property
+    @as_oparl_object
+    def paper(self):
+        return self._content.get('paper')
+
+    @property
+    @as_oparl_object_generator
+    def organizations(self):
+        return self._content.get('organization')
+
+    @property
+    def authoritative(self):
+        return self._content.get('authoritative')
+
+    @property
+    def role(self):
+        return self._content.get('role')
