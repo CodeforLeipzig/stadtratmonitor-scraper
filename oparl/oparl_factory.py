@@ -1,29 +1,21 @@
-import oparl.fakerequest as request
 from datetime import date, datetime
 from typing import Generator
 
 
 class Factory:
-    mapping = {}
-    request = request
+    pipeline = []
+
+    @classmethod
+    def add_function(cls, *args):
+        for arg in args:
+            cls.pipeline.append(arg)
 
     @classmethod
     def fabricate(cls, item: (str, dict)):
-        if item is None:
-            return
-
-        elif isinstance(item, str) and item.startswith('http'):
-            response = cls.request.get(item)
-            return cls.fabricate(response)
-
-        elif isinstance(item, dict):
-            object_type = item.get('type')
-            oparl_object = cls.mapping.get(object_type)
-            return oparl_object(item)
-
-        else:
-            message = f'unsupported item {item} type {type(item)}, expected url_str or dict with key "type"'
-            raise TypeError(message)
+        for func in cls.pipeline:
+            result = func(cls, item)
+            if result:
+                return result
 
     @classmethod
     def as_oparl_object(cls, func):
