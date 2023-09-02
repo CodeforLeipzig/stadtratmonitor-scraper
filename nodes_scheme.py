@@ -5,9 +5,11 @@ from typing import Any
 class BasicNodeInterface:
     _content: Any
     _labels: list
+    __slots__ = ('_content', '_labels')
 
-    def __init__(self, content):
+    def __init__(self, content, labels=None):
         self._content = content
+        self._labels = labels
 
     @property
     def labels(self):
@@ -93,16 +95,16 @@ class DbAttributeFactory:
 
 
 class DbRelation:
-    __slots__ = ('_relation_type', '_source', '_target', '_relation_obj')
+    __slots__ = ('_relation_type', '_source', '_target', '_content')
     _relation_type: str
     _source: BasicNodeInterface
     _target: BasicNodeInterface
 
-    def __init__(self, _rel_type, _source, _target, *, _relation=None):
-        self._relation_type = _rel_type
-        self._source = _source
-        self._target = _target
-        self._relation_obj = _relation
+    def __init__(self, relation_type, source, target, *, content=None):
+        self._relation_type = relation_type
+        self._source = source
+        self._target = target
+        self._content = content
 
     @property
     def source(self):
@@ -180,9 +182,9 @@ class ATTRIBUTES(ABC):
     WEB_URL = DbAttributeFactory('web_url')
 
 
-class AbcOparlPaperInterface(AbcNodeInterface):
-    _labels = [LABELS.OPARL,
-               LABELS.PAPER]
+class AbcOparlPaperInterface(BasicNodeInterface):
+    def __init__(self, content):
+        super().__init__(content, labels=[LABELS.OPARL, LABELS.PAPER])
 
     @abstractmethod
     def oparl_id(self): pass
@@ -206,10 +208,10 @@ class AbcOparlPaperInterface(AbcNodeInterface):
     def directors(self): pass
 
 
-class AbcOparlPersonInterface(AbcNodeInterface):
-    _labels = [LABELS.OPARL,
-               LABELS.NAMED_ENTITY,
-               LABELS.PERSON]
+
+class AbcOparlPersonInterface(BasicNodeInterface):
+    def __init__(self, content):
+        super().__init__(content, labels=[LABELS.OPARL, LABELS.NAMED_ENTITY, LABELS.PERSON])
 
     @abstractmethod
     def oparl_id(self): pass
@@ -224,10 +226,9 @@ class AbcOparlPersonInterface(AbcNodeInterface):
     def web_url(self): pass
 
 
-class AbcOparlOrganizationInterface(AbcNodeInterface):
-    _labels = [LABELS.OPARL,
-               LABELS.NAMED_ENTITY,
-               LABELS.ORGANIZATION]
+class AbcOparlOrganizationInterface(BasicNodeInterface):
+    def __init__(self, content):
+        super().__init__(content, labels=[LABELS.OPARL, LABELS.NAMED_ENTITY, LABELS.ORGANIZATION])
 
     @abstractmethod
     def oparl_id(self): pass
@@ -245,10 +246,9 @@ class AbcOparlOrganizationInterface(AbcNodeInterface):
     def end_date(self): pass
 
 
-class AbcOparlLocationInterface(AbcNodeInterface):
-    _labels = [LABELS.OPARL,
-               LABELS.NAMED_ENTITY,
-               LABELS.LOCATION]
+class AbcOparlLocationInterface(BasicNodeInterface):
+    def __init__(self, content):
+        super().__init__(content, labels=[LABELS.OPARL, LABELS.NAMED_ENTITY, LABELS.LOCATION])
 
     @abstractmethod
     def oparl_id(self): pass
@@ -269,7 +269,10 @@ class AbcOparlLocationInterface(AbcNodeInterface):
     def street_address(self): pass
 
 
-class AbcOparlConsultationInterface(AbcNodeInterface):
+class AbcOparlConsultationInterface(BasicNodeInterface):
+    def __init__(self, content):
+        super().__init__(content, labels=[LABELS.OPARL, LABELS.CONSULTATION])
+
     @abstractmethod
     def paper(self): pass
 
