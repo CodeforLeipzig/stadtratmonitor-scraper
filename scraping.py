@@ -2,11 +2,11 @@ from neo_connector import database_connection, Session
 from nodes_from_oparl import node_factory as oparl_node_factory
 from statements import create_relation
 from nodes_from_oparl import UnknownOparlNode
-from oparl import Pagination
+from oparl import Oparl
 
 
-def scrapping(db_con):
-    for item in Pagination():
+def scrapping(db_con, oparl_):
+    for item in oparl_.pagination():
         paper_node = oparl_node_factory(item)
         with db_con.session() as session:
             session: Session
@@ -26,7 +26,8 @@ def scrapping(db_con):
 
 if __name__ == '__main__':
     with database_connection() as dbc:
-        scrapping(dbc)
+        oparl = Oparl()
+        scrapping(dbc, oparl)
 
 
 #print(connection.driver.execute_query('match (n) return count(n)'))
