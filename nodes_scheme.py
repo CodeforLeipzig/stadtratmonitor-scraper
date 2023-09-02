@@ -93,15 +93,24 @@ class DbAttributeFactory:
 
 
 class DbRelation:
-    __slots__ = ('relation_type', 'source', 'target')
-    relation_type: str
-    source: AbcNodeInterface
-    target: AbcNodeInterface
+    __slots__ = ('_relation_type', '_source', '_target', '_relation_obj')
+    _relation_type: str
+    _source: AbcNodeInterface
+    _target: AbcNodeInterface
 
-    def __init__(self, rel_type, source, target):
-        self.relation_type = rel_type
-        self.source = source
-        self.target = target
+    def __init__(self, _rel_type, _source, _target, *, _relation=None):
+        self._relation_type = _rel_type
+        self._source = _source
+        self._target = _target
+        self._relation_obj = _relation
+
+    @property
+    def source(self):
+        return self._source
+
+    @property
+    def target(self):
+        return self._target
 
 
 class DbRelationFactory:
@@ -111,8 +120,8 @@ class DbRelationFactory:
         self._relation_type = relation_type
 
     def __call__(self, func, cls=DbRelation):
-        def get_relation(source: AbcNodeInterface, target: AbcNodeInterface):
-            return cls(self._relation_type, source, target)
+        def get_relation(*args):
+            return cls(self._relation_type, *func(*args))
         return DbRelationHook(get_relation)
 
     def with_class(self, cls):
@@ -121,8 +130,8 @@ class DbRelationFactory:
 
     def as_generator(self, func, cls=DbRelation):
         def relation_generator(*args):
-            for source, target in func(*args):
-                yield cls(self._relation_type, source, target)
+            for items in func(*args):
+                yield cls(self._relation_type, *items)
         return relation_generator
 
     def as_generator_with_class(self, cls):
@@ -232,8 +241,8 @@ class AbcOparlOrganizationInterface(AbcNodeInterface):
 
 class AbcOparlLocationInterface(AbcNodeInterface):
     _labels = [LABELS.OPARL,
-              LABELS.NAMED_ENTITY,
-              LABELS.LOCATION]
+               LABELS.NAMED_ENTITY,
+               LABELS.LOCATION]
 
     @abstractmethod
     def oparl_id(self): pass
@@ -252,4 +261,32 @@ class AbcOparlLocationInterface(AbcNodeInterface):
 
     @abstractmethod
     def street_address(self): pass
+
+
+class AbcOparlConsultationInterface(AbcNodeInterface):
+    @abstractmethod
+    def paper(self): pass
+
+    @abstractmethod
+    def organizations(self): pass
+
+    @abstractmethod
+    def authoritative(self): pass
+
+    @abstractmethod
+    def role(self): pass
+
+
+class AbcOparlMembershipInterface(DbRelation):
+    @abstractmethod
+    def voting_right(self): pass
+
+    @abstractmethod
+    def role(self): pass
+
+    @abstractmethod
+    def start_date(self): pass
+
+    @abstractmethod
+    def end_date(self): pass
 
