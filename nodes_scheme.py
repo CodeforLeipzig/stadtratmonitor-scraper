@@ -207,6 +207,11 @@ class AbcOparlPaperInterface(BasicNodeInterface):
     @abstractmethod
     def directors(self): pass
 
+    @abstractmethod
+    def originators(self): pass
+
+    @abstractmethod
+    def consultations(self): pass
 
 
 class AbcOparlPersonInterface(BasicNodeInterface):
@@ -274,6 +279,12 @@ class AbcOparlConsultationInterface(BasicNodeInterface):
         super().__init__(content, labels=[LABELS.OPARL, LABELS.CONSULTATION])
 
     @abstractmethod
+    def oparl_id(self): pass
+
+    @abstractmethod
+    def modified(self): pass
+
+    @abstractmethod
     def paper(self): pass
 
     @abstractmethod
@@ -287,6 +298,12 @@ class AbcOparlConsultationInterface(BasicNodeInterface):
 
 
 class AbcOparlMembershipInterface(DbRelation):
+    @abstractmethod
+    def oparl_id(self): pass
+
+    @abstractmethod
+    def modified(self): pass
+
     @abstractmethod
     def voting_right(self): pass
 
