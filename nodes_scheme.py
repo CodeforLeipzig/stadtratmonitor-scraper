@@ -2,7 +2,7 @@ from abc import abstractmethod, ABC
 from typing import Any
 
 
-class AbcNodeInterface(ABC):
+class BasicNodeInterface:
     _content: Any
     _labels: list
 
@@ -95,8 +95,8 @@ class DbAttributeFactory:
 class DbRelation:
     __slots__ = ('_relation_type', '_source', '_target', '_relation_obj')
     _relation_type: str
-    _source: AbcNodeInterface
-    _target: AbcNodeInterface
+    _source: BasicNodeInterface
+    _target: BasicNodeInterface
 
     def __init__(self, _rel_type, _source, _target, *, _relation=None):
         self._relation_type = _rel_type

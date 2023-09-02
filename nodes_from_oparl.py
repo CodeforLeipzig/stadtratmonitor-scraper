@@ -10,14 +10,14 @@ from oparl import \
 from nodes_scheme import \
     RELATIONS, \
     ATTRIBUTES, \
-    AbcNodeInterface, \
+    BasicNodeInterface, \
     AbcOparlPaperInterface, \
     AbcOparlPersonInterface, \
     AbcOparlOrganizationInterface, \
     AbcOparlLocationInterface
 
 
-class UnknownOparlNode(AbcNodeInterface):
+class UnknownOparlNode(BasicNodeInterface):
     _content: OparlBasic
     _labels = []
 
@@ -60,14 +60,19 @@ class OparlPaperNode(AbcOparlPaperInterface):
             if director.is_valid:
                 yield node_factory(director), self
 
-    @RELATIONS.SUBMITTED.as_generator
+    @RELATIONS.INDUCED.as_generator
     def originators(self):
         for originator in self._content.originator_persons:
             originator: OparlBasic
             if originator.is_valid:
                 yield node_factory(originator), self
 
-    #_content.consultations
+    @RELATIONS.CONCERNED.as_generator
+    def consultations(self):
+        for consultation in self._content.consultations:
+            consultation: OparlBasic
+            if consultation.is_valid:
+                yield node_factory(consultation), self
 
 
 class OparlPersonNode(AbcOparlPersonInterface):

@@ -1,5 +1,5 @@
 from nodes_from_neo4j import node_factory as neo4j_node_factory
-from nodes_scheme import AbcNodeInterface, DbAttribute, DbRelation
+from nodes_scheme import BasicNodeInterface, DbAttribute, DbRelation
 
 
 def retrieve_single(tx, node):
@@ -21,6 +21,7 @@ def full_merge(tx, node):
     result = result.single().value()
     return neo4j_node_factory(result)
 
+
 def create_relation(tx, node: DbRelation):
     s_ref, source = 'b', node.source
     t_ref, target = 'a', node.target
@@ -30,21 +31,20 @@ def create_relation(tx, node: DbRelation):
     merge_t, p3 = prepare_merge_by_primary(target, t_ref)
     on_create_t, p4 = prepare_create_set(target, t_ref)
     merge_r, _ = f'MERGE ({s_ref}) - [{r_ref}:{node.relation_type}] -> ({t_ref})', {}
-    return_, _ = prepare_return(r_ref)
+    return_, _ = prepare_return(s_ref, r_ref, t_ref)
 
     statement = '\n'.join([merge_s, on_create_s, merge_t, on_create_t, merge_r, return_])
     parameter = {**p1, **p2, **p3, **p4}
 
     result = tx.run(statement, parameter)
-    result = result.single().value()
-    return result #neo4j_node_factory(result)
+    return result.values() #neo4j_node_factory(result)
 
 
 def delete_all(tx, *_):
     return tx.run('MATCH (n) DETACH DELETE n').to_eager_result()
 
 
-def prepare_match_by_primary(node_interface: AbcNodeInterface, ref='n') -> tuple[str, dict]:
+def prepare_match_by_primary(node_interface: BasicNodeInterface, ref='n') -> tuple[str, dict]:
     prim_keys = list()
     parameter = dict()
 
@@ -62,7 +62,7 @@ def prepare_match_by_primary(node_interface: AbcNodeInterface, ref='n') -> tuple
     return statement, parameter
 
 
-def prepare_merge_by_primary(node_interface: AbcNodeInterface, ref='n') -> tuple[str, dict]:
+def prepare_merge_by_primary(node_interface: BasicNodeInterface, ref='n') -> tuple[str, dict]:
     parameter = dict()
     keys = list()
 
@@ -79,7 +79,7 @@ def prepare_merge_by_primary(node_interface: AbcNodeInterface, ref='n') -> tuple
     return statement, parameter
 
 
-def prepare_create_set(node_interface: AbcNodeInterface, ref='n'):
+def prepare_create_set(node_interface: BasicNodeInterface, ref='n'):
     parameter = dict()
     keys = list()
 

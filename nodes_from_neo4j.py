@@ -2,7 +2,7 @@ from neo4j.graph import Node
 
 from nodes_scheme import \
     ATTRIBUTES, \
-    AbcNodeInterface, \
+    BasicNodeInterface, \
     AbcOparlPaperInterface, \
     AbcOparlPersonInterface, \
     AbcOparlOrganizationInterface, \
