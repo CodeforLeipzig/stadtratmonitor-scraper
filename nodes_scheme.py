@@ -114,6 +114,10 @@ class DbRelation:
     def target(self):
         return self._target
 
+    @property
+    def relation_type(self):
+        return self._relation_type
+
 
 class DbRelationFactory:
     __slots__ = ('_relation_type', )
