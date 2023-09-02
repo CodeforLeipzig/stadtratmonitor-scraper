@@ -147,9 +147,83 @@ class OparlLocationNode(AbcOparlLocationInterface):
         return self._content.street_address
 
 
-factory_mapping = {OparlPerson: OparlPersonNode,
-                   OparlPaper: OparlPaperNode,
-                   OparlOrganization: OparlOrganizationNode,
+class OparlConsultationNode(AbcOparlConsultationInterface):
+    _content: OparlConsultation
+
+    @ATTRIBUTES.OPARL_ID.as_primary
+    def oparl_id(self):
+        return self._content.oparl_id
+
+    @ATTRIBUTES.MODIFIED
+    def modified(self):
+        return self._content.modified
+
+    @RELATIONS.CONCERNED
+    def paper(self):
+        paper = self._content.paper
+        if paper.is_valid:
+            return node_factory(paper)
+
+    @RELATIONS.PARTICIPATED.as_generator
+    def organizations(self):
+        for organization in self._content.organizations:
+            organization: OparlBasic
+            if organization.is_valid:
+                yield node_factory(organization), self
+
+    @ATTRIBUTES.AUTHORITATIVE
+    def authoritative(self):
+        return self._content.authoritative
+
+    @ATTRIBUTES.ROLE
+    def role(self):
+        return self._content.role
+
+
+class OparlMembershipRelation(AbcOparlMembershipInterface):
+    _content: OparlMembership
+
+    @property
+    def source(self):
+        if isinstance(self._source, OparlPersonNode):
+            return self._source
+        else:
+            return node_factory(self._content.person)
+
+    @property
+    def target(self):
+        if isinstance(self._target, OparlOrganizationNode):
+            return self._target
+        else:
+            return node_factory(self._content.organization)
+
+    @ATTRIBUTES.OPARL_ID.as_primary
+    def oparl_id(self):
+        return self._content.oparl_id
+
+    @ATTRIBUTES.MODIFIED
+    def modified(self):
+        return self._content.modified
+
+    @ATTRIBUTES.VOTING_RIGHT
+    def voting_right(self):
+        return self._content.voting_right
+
+    @ATTRIBUTES.ROLE
+    def role(self):
+        return self._content.role
+
+    @ATTRIBUTES.START_DATE
+    def start_date(self):
+        return self._content.start_date
+
+    @ATTRIBUTES.END_DATE
+    def end_date(self):
+        return self._content.end_date
+
+
+factory_mapping = {OparlBasic: UnknownOparlNode,
+                   OparlConsultation: OparlConsultationNode,
                    OparlLocation: OparlLocationNode,
                    OparlBasic: UnknownOparlNode}
 
