@@ -140,37 +140,43 @@ class DbRelationFactory:
 
 
 class LABELS(ABC):
-    OPARL = 'Oparl'
+    CONSULTATION = 'Consultation'
     LEGIS_TERM = 'LegisTerm'
-    THREAD = 'Thread'
-    PAPER = 'Paper'
-    NAMED_ENTITY = 'NamedEntity'
-    PERSON = 'Person'
-    ORGANIZATION = 'Organization'
     LOCATION = 'Location'
+    NAMED_ENTITY = 'NamedEntity'
+    OPARL = 'Oparl'
+    ORGANIZATION = 'Organization'
+    PAPER = 'Paper'
+    PERSON = 'Person'
+    THREAD = 'Thread'
 
 
 class RELATIONS(ABC):
-    IS_MEMBER = DbRelationFactory('IS_MEMBER')
-    LOCATED = DbRelationFactory('LOCATED')
-    PART_OF = DbRelationFactory('PART_OF')
-    DIRECTED = DbRelationFactory('DIRECTED')
-    SUBMITTED = DbRelationFactory('SUBMITTED')
+    CONCERNED = DbRelationFactory('CONCERNED')  # Consultation -> Paper -> Thread
+    DIRECTED = DbRelationFactory('DIRECTED')  # Organization | Person -> Paper
+    IN_PERIOD = DbRelationFactory('IN_PERIOD')  # Thread -> Legis_term
+    IS_MEMBER = DbRelationFactory('IS_MEMBER')  # Person -> Organization
+    LOCATED = DbRelationFactory('LOCATED')  # Organization -> Location
+    PARTICIPATED = DbRelationFactory('PARTICIPATED')
+    INDUCED = DbRelationFactory('SUBMITTED')  # Organization | Person -> Paper
 
 
 class ATTRIBUTES(ABC):
+    AUTHORITATIVE = DbAttributeFactory('authoritative')
     DESCRIPTION = DbAttributeFactory('description')
+    END_DATE = DbAttributeFactory('end_date')
     LOCALITY = DbAttributeFactory('locality')
-    NAME = DbAttributeFactory('name')
     MODIFIED = DbAttributeFactory('modified')
+    NAME = DbAttributeFactory('name')
     OPARL_ID = DbAttributeFactory('oparl_id')
     ORIGIN_DATE = DbAttributeFactory('origin_date')
     PAPER_TYPE = DbAttributeFactory('paper_type')
     POSTAL_CODE = DbAttributeFactory('postal_code')
     REFERENCE = DbAttributeFactory('reference')
+    ROLE = DbAttributeFactory('role')
     START_DATE = DbAttributeFactory('start_date')
     STREET_ADDRESS = DbAttributeFactory('street_address')
-    END_DATE = DbAttributeFactory('end_date')
+    VOTING_RIGHT = DbAttributeFactory('voting_right')
     WEB_URL = DbAttributeFactory('web_url')
 
 
