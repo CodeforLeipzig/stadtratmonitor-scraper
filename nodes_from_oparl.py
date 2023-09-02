@@ -3,9 +3,9 @@ from oparl import \
     Paper as OparlPaper, \
     Person as OparlPerson, \
     Organization as OparlOrganization, \
-    Location as OparlLocation,\
-    Factory as OparlFactory
-
+    Location as OparlLocation, \
+    Consultation as OparlConsultation, \
+    Membership as OparlMembership
 
 from nodes_scheme import \
     RELATIONS, \
@@ -14,7 +14,9 @@ from nodes_scheme import \
     AbcOparlPaperInterface, \
     AbcOparlPersonInterface, \
     AbcOparlOrganizationInterface, \
-    AbcOparlLocationInterface
+    AbcOparlLocationInterface, \
+    AbcOparlConsultationInterface, \
+    AbcOparlMembershipInterface
 
 
 class UnknownOparlNode(BasicNodeInterface):
@@ -225,7 +227,9 @@ class OparlMembershipRelation(AbcOparlMembershipInterface):
 factory_mapping = {OparlBasic: UnknownOparlNode,
                    OparlConsultation: OparlConsultationNode,
                    OparlLocation: OparlLocationNode,
-                   OparlBasic: UnknownOparlNode}
+                   OparlOrganization: OparlOrganizationNode,
+                   OparlPaper: OparlPaperNode,
+                   OparlPerson: OparlPersonNode}
 
 
 def node_factory(oparl_obj: OparlBasic):
