@@ -195,7 +195,7 @@ class RELATIONS(ABC):
     IS_MEMBER = DbRelationFactory('IS_MEMBER')  # Person -> Organization
     LOCATED = DbRelationFactory('LOCATED')  # Organization -> Location
     PARTICIPATED = DbRelationFactory('PARTICIPATED')
-    INDUCED = DbRelationFactory('SUBMITTED')  # Organization | Person -> Paper
+    INDUCED = DbRelationFactory('INDUCED')  # Organization | Person -> Paper
 
 
 class ATTRIBUTES(ABC):
