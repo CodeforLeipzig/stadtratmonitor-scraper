@@ -11,6 +11,16 @@ class BasicNodeInterface:
         self._content = content
         self._labels = labels
 
+    def __eq__(self, other):
+        if self is other or \
+                isinstance(other, BasicNodeInterface) and \
+                sorted(self.labels) == sorted(other.labels) and \
+                sorted(self.attributes(), key=lambda x: x.key()) == \
+                sorted(other.attributes(), key=lambda x: x.key()):
+            return True
+        else:
+            return False
+
     @property
     def labels(self):
         for label in self._labels:
@@ -62,9 +72,13 @@ class DbAttribute:
         yield self.key(), self.value()
 
     def __eq__(self, other):
-        assert isinstance(other, self.__class__)
-        if self.key() == other.key() and self.value() == other.value():
+        if self is other or \
+                isinstance(other, DbAttribute) and \
+                self.key() == other.key() and \
+                self.value() == other.value():
             return True
+        else:
+            return False
 
 
 class DbAttributeHook(property):
@@ -105,6 +119,17 @@ class DbRelation:
         self._source = source
         self._target = target
         self._content = content
+
+    def __eq__(self, other):
+        if self is other or \
+                isinstance(other, DbRelation) and \
+                self.relation_type == other.relation_type and \
+                self.source == other.source and \
+                self.target == other.target and \
+                self._content == other._content:
+            return True
+        else:
+            return False
 
     @property
     def source(self):
