@@ -217,6 +217,40 @@ class ATTRIBUTES(ABC):
     WEB_URL = DbAttributeFactory('web_url')
 
 
+_legis_labels = [LABELS.OPARL, LABELS.LEGIS_TERM]
+
+
+class AbcLegislativeTermInterface(BasicNodeInterface):
+    def __init__(self, content):
+        super().__init__(content, _legis_labels)
+
+    @abstractmethod
+    def name(self): pass
+
+    @abstractmethod
+    def start_date(self): pass
+
+    @abstractmethod
+    def end_date(self): pass
+
+
+_thread_labels = [LABELS.OPARL, LABELS.THREAD]
+
+
+class AbcThreadInterface(BasicNodeInterface):
+    def __init__(self, content):
+        super().__init__(content, _thread_labels)
+
+    @abstractmethod
+    def subject(self): pass
+
+    @abstractmethod
+    def reference(self): pass
+
+    @abstractmethod
+    def concerned(self): pass
+
+
 class AbcOparlPaperInterface(BasicNodeInterface):
     def __init__(self, content):
         super().__init__(content, labels=[LABELS.OPARL, LABELS.PAPER])
