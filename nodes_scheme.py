@@ -128,21 +128,23 @@ class DbRelationFactory:
     def __call__(self, func, cls=DbRelation):
         def get_relation(*args):
             return cls(self._relation_type, *func(*args))
+
         return DbRelationHook(get_relation)
 
     def with_class(self, cls):
         assert issubclass(cls, DbRelation)
-        return lambda x: self(x, cls=cls)
+        return DbRelationHook(lambda x: self(x, cls=cls))
 
     def as_generator(self, func, cls=DbRelation):
         def relation_generator(*args):
             for items in func(*args):
                 yield cls(self._relation_type, *items)
-        return relation_generator
+
+        return DbRelationHook(relation_generator)
 
     def as_generator_with_class(self, cls):
         assert issubclass(cls, DbRelation)
-        return lambda x: self.as_generator(x, cls=cls)
+        return DbRelationHook(lambda x: self.as_generator(x, cls=cls))
 
 
 class LABELS(ABC):
