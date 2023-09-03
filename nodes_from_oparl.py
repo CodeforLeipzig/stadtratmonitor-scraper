@@ -16,16 +16,9 @@ from nodes_scheme import \
     AbcOparlOrganizationInterface, \
     AbcOparlLocationInterface, \
     AbcOparlConsultationInterface, \
-    AbcOparlMembershipInterface
-
-
-class UnknownOparlNode(BasicNodeInterface):
-    _content: OparlBasic
-    _labels = []
-
-    @ATTRIBUTES.OPARL_ID.as_primary
-    def oparl_id(self):
-        return self._content.oparl_id
+    AbcOparlMembershipInterface, \
+    AbcThreadInterface, \
+    AbcLegislativeTermInterface
 
 
 class OparlPaperNode(AbcOparlPaperInterface):
@@ -206,7 +199,7 @@ class OparlConsultationNode(AbcOparlConsultationInterface):
     def paper(self):
         paper = self._content.paper
         if paper.is_valid:
-            return node_factory(paper)
+            return self, node_factory(paper)
 
     @RELATIONS.PARTICIPATED.as_generator
     def organizations(self):
@@ -266,7 +259,7 @@ class OparlMembershipRelation(AbcOparlMembershipInterface):
         return self._content.end_date
 
 
-factory_mapping = {OparlBasic: UnknownOparlNode,
+factory_mapping = {OparlBasic: BasicNodeInterface,
                    OparlConsultation: OparlConsultationNode,
                    OparlLocation: OparlLocationNode,
                    OparlOrganization: OparlOrganizationNode,
@@ -276,6 +269,5 @@ factory_mapping = {OparlBasic: UnknownOparlNode,
 
 def node_factory(oparl_obj: OparlBasic):
     oparl_cls = oparl_obj.__class__
-    assert issubclass(oparl_cls, OparlBasic)
     node_cls = factory_mapping.get(oparl_cls)
     return node_cls(oparl_obj)
