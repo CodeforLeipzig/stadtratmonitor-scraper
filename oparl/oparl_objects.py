@@ -83,7 +83,7 @@ class Paper(Basic):
     @property
     @as_oparl_object_generator
     def consultations(self):
-        return self._content.get('consultations')
+        return self._content.get('consultation')
 
     @property
     def web_url(self) -> str:
