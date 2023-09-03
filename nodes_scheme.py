@@ -1,13 +1,13 @@
 from abc import abstractmethod, ABC
-from typing import Any
+from typing import Any, Generator
 
 
 class BasicNodeInterface:
     _content: Any
-    _labels: list
+    _thread_labels: list
     __slots__ = ('_content', '_labels')
 
-    def __init__(self, content, labels=None):
+    def __init__(self, content, labels):
         self._content = content
         self._labels = labels
 
@@ -27,16 +27,15 @@ class BasicNodeInterface:
             yield label
 
     def attributes(self):
-        for cls in self.__class__.mro():
-            for key, attr in cls.__dict__.items():
-                if isinstance(attr, DbAttributeHook):
-                    yield getattr(self, key)
+        for key, attr in self.__class__.__dict__.items():
+            if isinstance(attr, DbAttributeHook):
+                yield getattr(self, key)
 
     def primary_keys(self):
-        for property_ in self.attributes():
-            property_: DbAttribute
-            if property_.is_primary():
-                yield property_
+        for attribute in self.attributes():
+            attribute: DbAttribute
+            if attribute.is_primary():
+                yield attribute
 
     def non_primary_keys(self):
         for attribute in self.attributes():
@@ -45,10 +44,14 @@ class BasicNodeInterface:
                 yield attribute
 
     def relations(self):
-        for cls in self.__class__.mro():
-            for key, attr in cls.__dict__.items():
-                if isinstance(attr, DbRelationHook):
-                    yield getattr(self, key)
+        for key, attr in self.__class__.__dict__.items():
+            if isinstance(attr, DbRelationHook):
+                relation = getattr(self, key)
+                if isinstance(relation, Generator):
+                    for rel in relation:
+                        yield rel
+                else:
+                    yield relation
 
 
 class DbAttribute:
@@ -113,6 +116,7 @@ class DbRelation:
     _relation_type: str
     _source: BasicNodeInterface
     _target: BasicNodeInterface
+    _content: (BasicNodeInterface, None)
 
     def __init__(self, relation_type, source, target, *, content=None):
         self._relation_type = relation_type
@@ -245,9 +249,12 @@ class AbcOparlPaperInterface(BasicNodeInterface):
     def consultations(self): pass
 
 
+_oparl_person_labels = [LABELS.OPARL, LABELS.NAMED_ENTITY, LABELS.PERSON]
+
+
 class AbcOparlPersonInterface(BasicNodeInterface):
     def __init__(self, content):
-        super().__init__(content, labels=[LABELS.OPARL, LABELS.NAMED_ENTITY, LABELS.PERSON])
+        super().__init__(content, _oparl_person_labels)
 
     @abstractmethod
     def oparl_id(self): pass
@@ -262,9 +269,12 @@ class AbcOparlPersonInterface(BasicNodeInterface):
     def web_url(self): pass
 
 
+_oparl_organization_labels = [LABELS.OPARL, LABELS.NAMED_ENTITY, LABELS.ORGANIZATION]
+
+
 class AbcOparlOrganizationInterface(BasicNodeInterface):
     def __init__(self, content):
-        super().__init__(content, labels=[LABELS.OPARL, LABELS.NAMED_ENTITY, LABELS.ORGANIZATION])
+        super().__init__(content, _oparl_organization_labels)
 
     @abstractmethod
     def oparl_id(self): pass
@@ -282,9 +292,12 @@ class AbcOparlOrganizationInterface(BasicNodeInterface):
     def end_date(self): pass
 
 
+_oparl_location_labels = [LABELS.OPARL, LABELS.NAMED_ENTITY, LABELS.LOCATION]
+
+
 class AbcOparlLocationInterface(BasicNodeInterface):
     def __init__(self, content):
-        super().__init__(content, labels=[LABELS.OPARL, LABELS.NAMED_ENTITY, LABELS.LOCATION])
+        super().__init__(content, _oparl_location_labels)
 
     @abstractmethod
     def oparl_id(self): pass
@@ -305,9 +318,12 @@ class AbcOparlLocationInterface(BasicNodeInterface):
     def street_address(self): pass
 
 
+_consultation_labels = [LABELS.OPARL, LABELS.CONSULTATION]
+
+
 class AbcOparlConsultationInterface(BasicNodeInterface):
     def __init__(self, content):
-        super().__init__(content, labels=[LABELS.OPARL, LABELS.CONSULTATION])
+        super().__init__(content, _consultation_labels)
 
     @abstractmethod
     def oparl_id(self): pass
@@ -346,4 +362,3 @@ class AbcOparlMembershipInterface(DbRelation):
 
     @abstractmethod
     def end_date(self): pass
-
