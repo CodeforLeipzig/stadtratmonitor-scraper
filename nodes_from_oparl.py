@@ -76,6 +76,48 @@ class OparlPaperNode(AbcOparlPaperInterface):
             if consultation.is_valid:
                 yield node_factory(consultation), self
 
+    @RELATIONS.CONCERNED
+    def oparl_thread(self):
+        return self, OparlThreadNode(self._content)
+
+
+class OparlLegislativeTermNode(AbcLegislativeTermInterface):
+    _content: OparlPaper
+
+    @ATTRIBUTES.NAME.as_primary
+    def name(self):
+        return self._content.legis_term
+
+    @ATTRIBUTES.START_DATE
+    def start_date(self): pass
+
+    @ATTRIBUTES.END_DATE
+    def end_date(self): pass
+
+    @RELATIONS.IN_PERIOD
+    def in_period(self):
+        return OparlThreadNode(self._content), self
+
+
+class OparlThreadNode(AbcThreadInterface):
+    _content: OparlPaper
+
+    @ATTRIBUTES.NAME
+    def subject(self):
+        return self._content.subject
+
+    @ATTRIBUTES.REFERENCE.as_primary
+    def reference(self):
+        return self._content.thread_number
+
+    @RELATIONS.CONCERNED
+    def paper(self):
+        return node_factory(self._content), self
+
+    @RELATIONS.IN_PERIOD
+    def legis_term(self):
+        return self, OparlLegislativeTermNode(self._content)
+
 
 class OparlPersonNode(AbcOparlPersonInterface):
     _content: OparlPerson
