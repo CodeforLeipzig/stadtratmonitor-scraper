@@ -36,5 +36,8 @@ def database_connection():
 
 if __name__ == '__main__':
     database = Database(**neo4j_config())
-    res = database.driver.execute_query('match (n) return count(n)')
+    print(database.driver.execute_query('match (n) return count(n)'))
+    print(database.driver.execute_query('match (n) detach delete n'))
+    print(database.driver.execute_query('match (n) return count(n)'))
+    database.driver.close()
     exit()
