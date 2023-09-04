@@ -1,6 +1,8 @@
-from nodes_from_neo4j import node_factory as neo4j_node_factory
-from nodes_scheme import BasicNodeInterface, DbAttribute, DbRelation
+# from ..graph import node_factory as neo4j_node_factory
+from ..graph import BasicNodeInterface, DbAttribute, DbRelation
 
+
+neo4j_node_factory = lambda x: None
 
 def retrieve_single(tx, node):
     ref = 'n'

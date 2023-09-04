@@ -5,7 +5,7 @@ from contextlib import contextmanager
 
 def neo4j_config():
     config = ConfigParser()
-    config.read('config')
+    config.read('./config')
     section = config['Neo4j']
     return dict(uri=section['NEO4J_URI'],
                 user=section['NEO4J_USERNAME'],
