@@ -1,5 +1,5 @@
-from oparl.oparl_factory import Factory
 from re import findall
+from ._factory import Factory
 
 as_oparl_object = Factory.as_oparl_object
 as_simple_generator = Factory.as_simple_generator

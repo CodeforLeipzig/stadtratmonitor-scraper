@@ -1,7 +1,7 @@
 from collections import deque
-import oparl.fakerequest as request
-from oparl.oparl_factory import Factory
-from oparl.oparl_objects import \
+from . import fakerequest as request
+from ._factory import Factory
+from ._objects import \
     Basic, Paper, Person, Organization, Location, Membership, Consultation
 
 
