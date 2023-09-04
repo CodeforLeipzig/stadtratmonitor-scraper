@@ -1,9 +1,8 @@
-from neo_connector import database_connection, Session
-from nodes_scheme import BasicNodeInterface, DbRelation
-from nodes_from_oparl import node_factory as oparl_node_factory
-from statements import create_relation
-from oparl import Oparl
 from collections import deque
+from app.database import connection, Session
+from app.graph import BasicNodeInterface, DbRelation, oparl_node_factory
+from app.database.statements import create_relation
+from app.oparl import Oparl
 
 
 def update_nodes_and_relations(tx, node: BasicNodeInterface, buffer=None, /):
@@ -43,7 +42,7 @@ def scrapping(db_con, oparl_):
 
 
 if __name__ == '__main__':
-    with database_connection() as dbc:
+    with connection() as dbc:
         oparl = Oparl()
         scrapping(dbc, oparl)
 
