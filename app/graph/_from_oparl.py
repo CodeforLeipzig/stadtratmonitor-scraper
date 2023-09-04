@@ -1,28 +1,11 @@
-from oparl import \
-    Basic as OparlBasic, \
-    Paper as OparlPaper, \
-    Person as OparlPerson, \
-    Organization as OparlOrganization, \
-    Location as OparlLocation, \
-    Consultation as OparlConsultation, \
-    Membership as OparlMembership
-
-from nodes_scheme import \
-    RELATIONS, \
-    ATTRIBUTES, \
-    BasicNodeInterface, \
-    AbcOparlPaperInterface, \
-    AbcOparlPersonInterface, \
-    AbcOparlOrganizationInterface, \
-    AbcOparlLocationInterface, \
-    AbcOparlConsultationInterface, \
-    AbcOparlMembershipInterface, \
-    AbcThreadInterface, \
-    AbcLegislativeTermInterface
+from ._scheme import RELATIONS, ATTRIBUTES
+from ._basic import BasicNodeInterface
+from . import _interfaces as ifs
+from .. import oparl
 
 
-class OparlPaperNode(AbcOparlPaperInterface):
-    _content: OparlPaper
+class PaperNode(ifs.Paper):
+    _content: oparl.Paper
 
     @ATTRIBUTES.OPARL_ID.as_primary
     def oparl_id(self):
@@ -51,31 +34,31 @@ class OparlPaperNode(AbcOparlPaperInterface):
     @RELATIONS.DIRECTED.as_generator
     def directors(self):
         for director in self._content.under_direction_of:
-            director: OparlBasic
+            director: oparl.Basic
             if director.is_valid:
                 yield node_factory(director), self
 
     @RELATIONS.INDUCED.as_generator
     def originators(self):
         for originator in self._content.originator_persons:
-            originator: OparlBasic
+            originator: oparl.Basic
             if originator.is_valid:
                 yield node_factory(originator), self
 
     @RELATIONS.CONCERNED.as_generator
     def consultations(self):
         for consultation in self._content.consultations:
-            consultation: OparlBasic
+            consultation: oparl.Basic
             if consultation.is_valid:
                 yield node_factory(consultation), self
 
     @RELATIONS.CONCERNED
     def oparl_thread(self):
-        return self, OparlThreadNode(self._content)
+        return self, ThreadNode(self._content)
 
 
-class OparlLegislativeTermNode(AbcLegislativeTermInterface):
-    _content: OparlPaper
+class LegislativeTermNode(ifs.LegislativeTerm):
+    _content: oparl.Paper
 
     @ATTRIBUTES.NAME.as_primary
     def name(self):
@@ -89,11 +72,11 @@ class OparlLegislativeTermNode(AbcLegislativeTermInterface):
 
     @RELATIONS.IN_PERIOD
     def in_period(self):
-        return OparlThreadNode(self._content), self
+        return ThreadNode(self._content), self
 
 
-class OparlThreadNode(AbcThreadInterface):
-    _content: OparlPaper
+class ThreadNode(ifs.Thread):
+    _content: oparl.Paper
 
     @ATTRIBUTES.NAME
     def subject(self):
@@ -109,11 +92,11 @@ class OparlThreadNode(AbcThreadInterface):
 
     @RELATIONS.IN_PERIOD
     def legis_term(self):
-        return self, OparlLegislativeTermNode(self._content)
+        return self, LegislativeTermNode(self._content)
 
 
-class OparlPersonNode(AbcOparlPersonInterface):
-    _content: OparlPerson
+class OparlPersonNode(ifs.OparlPerson):
+    _content: oparl.Person
 
     @ATTRIBUTES.OPARL_ID.as_primary
     def oparl_id(self):
@@ -132,8 +115,8 @@ class OparlPersonNode(AbcOparlPersonInterface):
         return self._content.web_url
 
 
-class OparlOrganizationNode(AbcOparlOrganizationInterface):
-    _content: OparlOrganization
+class OparlOrganizationNode(ifs.OparlOrganization):
+    _content: oparl.Organization
 
     @ATTRIBUTES.OPARL_ID.as_primary
     def oparl_id(self):
@@ -156,8 +139,8 @@ class OparlOrganizationNode(AbcOparlOrganizationInterface):
         return self._content.end_date
 
 
-class OparlLocationNode(AbcOparlLocationInterface):
-    _content: OparlLocation
+class OparlLocationNode(ifs.OparlLocation):
+    _content: oparl.Location
 
     @ATTRIBUTES.OPARL_ID.as_primary
     def oparl_id(self):
@@ -184,8 +167,8 @@ class OparlLocationNode(AbcOparlLocationInterface):
         return self._content.street_address
 
 
-class OparlConsultationNode(AbcOparlConsultationInterface):
-    _content: OparlConsultation
+class ConsultationNode(ifs.Consultation):
+    _content: oparl.Consultation
 
     @ATTRIBUTES.OPARL_ID.as_primary
     def oparl_id(self):
@@ -204,7 +187,7 @@ class OparlConsultationNode(AbcOparlConsultationInterface):
     @RELATIONS.PARTICIPATED.as_generator
     def organizations(self):
         for organization in self._content.organizations:
-            organization: OparlBasic
+            organization: oparl.Basic
             if organization.is_valid:
                 yield node_factory(organization), self
 
@@ -217,8 +200,8 @@ class OparlConsultationNode(AbcOparlConsultationInterface):
         return self._content.role
 
 
-class OparlMembershipRelation(AbcOparlMembershipInterface):
-    _content: OparlMembership
+class MembershipRelation(ifs.Membership):
+    _content: oparl.Membership
 
     @property
     def source(self):
@@ -259,15 +242,15 @@ class OparlMembershipRelation(AbcOparlMembershipInterface):
         return self._content.end_date
 
 
-factory_mapping = {OparlBasic: BasicNodeInterface,
-                   OparlConsultation: OparlConsultationNode,
-                   OparlLocation: OparlLocationNode,
-                   OparlOrganization: OparlOrganizationNode,
-                   OparlPaper: OparlPaperNode,
-                   OparlPerson: OparlPersonNode}
+factory_mapping = {oparl.Basic: BasicNodeInterface,
+                   oparl.Consultation: ConsultationNode,
+                   oparl.Location: OparlLocationNode,
+                   oparl.Organization: OparlOrganizationNode,
+                   oparl.Paper: PaperNode,
+                   oparl.Person: OparlPersonNode}
 
 
-def node_factory(oparl_obj: OparlBasic):
+def node_factory(oparl_obj: oparl.Basic):
     oparl_cls = oparl_obj.__class__
     node_cls = factory_mapping.get(oparl_cls)
     return node_cls(oparl_obj)

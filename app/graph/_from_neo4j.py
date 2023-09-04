@@ -1,15 +1,16 @@
 from neo4j.graph import Node
 
-from nodes_scheme import \
-    ATTRIBUTES, \
-    BasicNodeInterface, \
-    AbcOparlPaperInterface, \
-    AbcOparlPersonInterface, \
-    AbcOparlOrganizationInterface, \
-    AbcOparlLocationInterface
+from ._scheme import \
+    ATTRIBUTES
+
+from ._interfaces import \
+    Paper, \
+    OparlPerson, \
+    OparlOrganization, \
+    OparlLocation
 
 
-class Paper(AbcOparlPaperInterface):
+class Paper(Paper):
     _content: Node
 
     @ATTRIBUTES.OPARL_ID.as_primary
@@ -41,9 +42,9 @@ class Paper(AbcOparlPaperInterface):
 
 
 factory_mapping = [Paper,
-                   AbcOparlPersonInterface,
-                   AbcOparlOrganizationInterface,
-                   AbcOparlLocationInterface]
+                   OparlPerson,
+                   OparlOrganization,
+                   OparlLocation]
 
 
 def node_factory(result):
