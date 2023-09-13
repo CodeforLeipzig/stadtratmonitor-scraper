@@ -71,4 +71,13 @@ class Oparl:
             return result
 
 
-Oparl.factory.add_function(Oparl._wrap_oparl, Oparl._ask_buffer, Oparl._retrieve_from_api)
+class NOPARL:
+
+    # noinspection PyPropertyDefinition
+    @classmethod
+    @property
+    def is_valid(cls):
+        return False
+
+
+Oparl.factory.add_function(Oparl._is_missing, Oparl._wrap_oparl, Oparl._ask_buffer, Oparl._retrieve_from_api)
