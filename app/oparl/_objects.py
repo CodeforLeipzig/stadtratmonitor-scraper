@@ -14,6 +14,16 @@ class Basic:
     def __init__(self, content: dict):
         self._content = content
 
+    def __eq__(self, other):
+        if self is other or \
+                isinstance(other, self.__class__) and \
+                self.oparl_id == other.oparl_id and \
+                self.oparl_type == other.oparl_type and \
+                self.modified == other.modified:
+            return True
+        else:
+            return False
+
     @property
     def oparl_id(self) -> str:
         return self._content.get('id')
