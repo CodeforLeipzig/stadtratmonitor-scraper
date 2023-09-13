@@ -55,6 +55,12 @@ class Oparl:
             for buffered_item in cls.buffer:
                 if item == buffered_item.oparl_id:
                     return buffered_item
+        elif isinstance(item, Basic):
+            for buffered_item in cls.buffer:
+                if item == buffered_item:
+                    return buffered_item
+        else:
+            return None
 
     @classmethod
     def _retrieve_from_api(cls, factory: Factory, item):
