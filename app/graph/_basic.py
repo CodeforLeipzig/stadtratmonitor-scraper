@@ -117,7 +117,7 @@ class DbRelation:
     _target: BasicNodeInterface
     _content: (BasicNodeInterface, None)
 
-    def __init__(self, relation_type, source, target, *, content=None):
+    def __init__(self, relation_type, source, target, content=None, /):
         self._relation_type = relation_type
         self._source = source
         self._target = target
