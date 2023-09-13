@@ -139,44 +139,6 @@ class PaperNode(ifs.Paper):
         return self, ThreadNode(self._content)
 
 
-class LegislativeTermNode(ifs.LegislativeTerm):
-    _content: oparl.Paper
-
-    @ATTRIBUTES.NAME.as_primary
-    def name(self):
-        return self._content.legis_term
-
-    @ATTRIBUTES.START_DATE
-    def start_date(self): pass
-
-    @ATTRIBUTES.END_DATE
-    def end_date(self): pass
-
-    @RELATIONS.IN_PERIOD
-    def in_period(self):
-        return ThreadNode(self._content), self
-
-
-class ThreadNode(ifs.Thread):
-    _content: oparl.Paper
-
-    @ATTRIBUTES.NAME
-    def subject(self):
-        return self._content.subject
-
-    @ATTRIBUTES.REFERENCE.as_primary
-    def reference(self):
-        return self._content.thread_number
-
-    @RELATIONS.CONCERNED
-    def paper(self):
-        return node_factory(self._content), self
-
-    @RELATIONS.IN_PERIOD
-    def legis_term(self):
-        return self, LegislativeTermNode(self._content)
-
-
 class OparlPersonNode(ifs.OparlPerson):
     _content: oparl.Person
 
@@ -195,6 +157,15 @@ class OparlPersonNode(ifs.OparlPerson):
     @ATTRIBUTES.WEB_URL
     def web_url(self):
         return self._content.web_url
+
+    def location(self) -> tuple:
+        pass
+
+    def status(self) -> str:
+        pass
+
+    def title(self) -> str:
+        pass
 
 
 class OparlOrganizationNode(ifs.OparlOrganization):
