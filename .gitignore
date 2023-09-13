@@ -1,7 +1,4 @@
 /neo4j/
 /.idea
-/config
-/requirements.txt
-/dockerfile
 /mirror.db
 /mirror/
