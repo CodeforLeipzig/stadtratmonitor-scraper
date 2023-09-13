@@ -37,6 +37,11 @@ class Oparl:
                     url = url.get('next')
 
     @classmethod
+    def _is_missing(cls, _, item):
+        if item is None:
+            return NOPARL
+
+    @classmethod
     def _wrap_oparl(cls, _: Factory, item):
         if isinstance(item, dict):
             o_cls = cls.factory_mapping.get(item.get('type'))
