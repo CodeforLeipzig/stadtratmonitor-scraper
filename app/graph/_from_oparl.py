@@ -4,6 +4,84 @@ from . import _interfaces as ifs
 from .. import oparl
 
 
+class LegislativeTermNode(ifs.LegislativeTerm):
+    _content: oparl.Paper
+
+    @ATTRIBUTES.NAME.as_primary
+    def name(self):
+        return self._content.legis_term
+
+    @ATTRIBUTES.START_DATE
+    def start_date(self): pass
+
+    @ATTRIBUTES.END_DATE
+    def end_date(self): pass
+
+
+class ThreadNode(ifs.Thread):
+    _content: oparl.Paper
+
+    @ATTRIBUTES.NAME
+    def subject(self):
+        return self._content.subject
+
+    @ATTRIBUTES.REFERENCE.as_primary
+    def reference(self):
+        return self._content.thread_number
+
+    @RELATIONS.IN_PERIOD
+    def legis_term(self):
+        return self, LegislativeTermNode(self._content)
+
+
+class ConsultationRelation(ifs.Consultation):
+    _content: oparl.Consultation
+
+    @ATTRIBUTES.OPARL_ID
+    def oparl_id(self):
+        return self._content.oparl_id
+
+    @ATTRIBUTES.MODIFIED
+    def modified(self):
+        return self._content.modified
+
+    @ATTRIBUTES.AUTHORITATIVE
+    def authoritative(self):
+        return self._content.authoritative
+
+    @ATTRIBUTES.ROLE
+    def role(self):
+        return self._content.role
+
+
+class MembershipRelation(ifs.Membership):
+    _content: oparl.Membership
+
+    @ATTRIBUTES.OPARL_ID.as_primary
+    def oparl_id(self):
+        return self._content.oparl_id
+
+    @ATTRIBUTES.MODIFIED
+    def modified(self):
+        return self._content.modified
+
+    @ATTRIBUTES.VOTING_RIGHT
+    def voting_right(self):
+        return self._content.voting_right
+
+    @ATTRIBUTES.ROLE
+    def role(self):
+        return self._content.role
+
+    @ATTRIBUTES.START_DATE
+    def start_date(self):
+        return self._content.start_date
+
+    @ATTRIBUTES.END_DATE
+    def end_date(self):
+        return self._content.end_date
+
+
 class PaperNode(ifs.Paper):
     _content: oparl.Paper
 
