@@ -123,12 +123,16 @@ class PaperNode(ifs.Paper):
             if originator.is_valid:
                 yield node_factory(originator), self
 
-    @RELATIONS.CONCERNED.as_generator
+    @RELATIONS.CONCERNED.as_generator_with_class(ConsultationRelation)
     def consultations(self):
         for consultation in self._content.consultations:
-            consultation: oparl.Basic
+            consultation: oparl.Consultation
             if consultation.is_valid:
-                yield node_factory(consultation), self
+                for organization in consultation.organizations:
+                    organization: oparl.Organization
+                    if organization.is_valid:
+                        yield node_factory(organization), self, \
+                            consultation
 
     @RELATIONS.CONCERNED
     def oparl_thread(self):
