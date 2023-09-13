@@ -38,11 +38,13 @@ class RELATIONS:
 
 class ATTRIBUTES:
     AUTHORITATIVE = DbAttributeFactory('authoritative')
+    CLASSIFICATION = DbAttributeFactory('classification')
     DESCRIPTION = DbAttributeFactory('description')
     END_DATE = DbAttributeFactory('end_date')
     LOCALITY = DbAttributeFactory('locality')
     MODIFIED = DbAttributeFactory('modified')
     NAME = DbAttributeFactory('name')
+    ORGANIZATION_TYPE = DbAttributeFactory('organization_type')
     OPARL_ID = DbAttributeFactory('oparl_id')
     ORIGIN_DATE = DbAttributeFactory('origin_date')
     PAPER_TYPE = DbAttributeFactory('paper_type')
