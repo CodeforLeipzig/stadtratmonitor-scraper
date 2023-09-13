@@ -158,6 +158,23 @@ class Organization(Basic):
     def memberships(self):
         return self._content.get('membership')
 
+    @property
+    def organization_type(self):
+        return self._content.get('organizationType')
+
+    @property
+    def classification(self):
+        return self._content.get('classification')
+
+    @property
+    def web_url(self):
+        return self._content.get('web')
+
+    @property
+    @as_oparl_object
+    def parent_organization(self):
+        return self._content.get('subOrganizationOf')
+
 
 class Location(Basic):
     @property
