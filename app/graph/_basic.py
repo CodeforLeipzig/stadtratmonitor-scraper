@@ -134,6 +134,11 @@ class DbRelation:
         else:
             return False
 
+    def attributes(self):
+        for key, attr in self.__class__.__dict__.items():
+            if isinstance(attr, DbAttributeHook):
+                yield getattr(self, key)
+
     @property
     def source(self):
         return self._source
