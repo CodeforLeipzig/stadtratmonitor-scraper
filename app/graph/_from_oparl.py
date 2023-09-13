@@ -191,6 +191,41 @@ class OparlOrganizationNode(ifs.OparlOrganization):
     def end_date(self):
         return self._content.end_date
 
+    @RELATIONS.LOCATED
+    def location(self) -> tuple:
+        location = self._content.location
+        if location.is_valid:
+            return self, node_factory(location)
+
+    @ATTRIBUTES.ORGANIZATION_TYPE
+    def organization_type(self) -> str:
+        return self._content.organization_type
+
+    @ATTRIBUTES.CLASSIFICATION
+    def classification(self) -> str:
+        return self._content.classification
+
+    @RELATIONS.IS_MEMBER.as_generator_with_class(MembershipRelation)
+    def members(self) -> tuple:
+        for membership in self._content.memberships:
+            membership: oparl.Membership
+            if membership.is_valid:
+                member = membership.person
+                member: oparl.Person
+                if member.is_valid:
+                    yield node_factory(member), self, membership
+
+    @ATTRIBUTES.WEB_URL
+    def web_url(self) -> str:
+        return self._content.web_url
+
+    @RELATIONS.IS_MEMBER.as_generator
+    def parent_organization(self) -> tuple:
+        parent_org = self._content.parent_organization
+        parent_org: oparl.Organization
+        if parent_org.is_valid:
+            yield self, node_factory(parent_org)
+
 
 class OparlLocationNode(ifs.OparlLocation):
     _content: oparl.Location
@@ -218,81 +253,6 @@ class OparlLocationNode(ifs.OparlLocation):
     @ATTRIBUTES.STREET_ADDRESS
     def street_address(self):
         return self._content.street_address
-
-
-class ConsultationNode(ifs.Consultation):
-    _content: oparl.Consultation
-
-    @ATTRIBUTES.OPARL_ID.as_primary
-    def oparl_id(self):
-        return self._content.oparl_id
-
-    @ATTRIBUTES.MODIFIED
-    def modified(self):
-        return self._content.modified
-
-    @RELATIONS.CONCERNED
-    def paper(self):
-        paper = self._content.paper
-        if paper.is_valid:
-            return self, node_factory(paper)
-
-    @RELATIONS.PARTICIPATED.as_generator
-    def organizations(self):
-        for organization in self._content.organizations:
-            organization: oparl.Basic
-            if organization.is_valid:
-                yield node_factory(organization), self
-
-    @ATTRIBUTES.AUTHORITATIVE
-    def authoritative(self):
-        return self._content.authoritative
-
-    @ATTRIBUTES.ROLE
-    def role(self):
-        return self._content.role
-
-
-class MembershipRelation(ifs.Membership):
-    _content: oparl.Membership
-
-    @property
-    def source(self):
-        if isinstance(self._source, OparlPersonNode):
-            return self._source
-        else:
-            return node_factory(self._content.person)
-
-    @property
-    def target(self):
-        if isinstance(self._target, OparlOrganizationNode):
-            return self._target
-        else:
-            return node_factory(self._content.organization)
-
-    @ATTRIBUTES.OPARL_ID.as_primary
-    def oparl_id(self):
-        return self._content.oparl_id
-
-    @ATTRIBUTES.MODIFIED
-    def modified(self):
-        return self._content.modified
-
-    @ATTRIBUTES.VOTING_RIGHT
-    def voting_right(self):
-        return self._content.voting_right
-
-    @ATTRIBUTES.ROLE
-    def role(self):
-        return self._content.role
-
-    @ATTRIBUTES.START_DATE
-    def start_date(self):
-        return self._content.start_date
-
-    @ATTRIBUTES.END_DATE
-    def end_date(self):
-        return self._content.end_date
 
 
 factory_mapping = {oparl.Basic: BasicNodeInterface,
