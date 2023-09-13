@@ -166,7 +166,7 @@ class DbRelationFactory:
 
     def with_class(self, cls):
         assert issubclass(cls, DbRelation)
-        return DbRelationHook(lambda x: self(x, cls=cls))
+        return lambda x: self(x, cls=cls)
 
     def as_generator(self, func, cls=DbRelation):
         def relation_generator(*args):
@@ -177,6 +177,6 @@ class DbRelationFactory:
 
     def as_generator_with_class(self, cls):
         assert issubclass(cls, DbRelation)
-        return DbRelationHook(lambda x: self.as_generator(x, cls=cls))
+        return lambda x: self.as_generator(x, cls=cls)
 
 
