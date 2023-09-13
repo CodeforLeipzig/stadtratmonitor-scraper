@@ -256,7 +256,6 @@ class OparlLocationNode(ifs.OparlLocation):
 
 
 factory_mapping = {oparl.Basic: BasicNodeInterface,
-                   oparl.Consultation: ConsultationNode,
                    oparl.Location: OparlLocationNode,
                    oparl.Organization: OparlOrganizationNode,
                    oparl.Paper: PaperNode,
