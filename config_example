@@ -1,0 +1,7 @@
+[Neo4j]
+NEO4J_URI = neo4j+ssc://<something>
+NEO4J_USERNAME = <name>
+NEO4J_PASSWORD = <token>
+AURA_INSTANCEID = <unused>
+AURA_INSTANCENAME = <unused>
+
