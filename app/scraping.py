@@ -1,14 +1,14 @@
 from collections import deque
 from app.database import connection, Session
-from app.graph import BasicNodeInterface, DbRelation, oparl_node_factory
+from app.graph import Node, Relation, oparl_node_factory
 from app.database.statements import create_relation
 from app.oparl import Oparl
 
 
-def update_nodes_and_relations(tx, node: BasicNodeInterface, buffer=None, /):
+def update_nodes_and_relations(tx, node: Node, buffer=None, /):
     _buffer = buffer if buffer else deque()
     for relation in node.relations():
-        relation: DbRelation
+        relation: Relation
         if relation in _buffer:
             continue
         else:
@@ -16,7 +16,7 @@ def update_nodes_and_relations(tx, node: BasicNodeInterface, buffer=None, /):
             print(result)
             _buffer.appendleft(relation)
             for item in (relation.source, relation.target):
-                item: BasicNodeInterface
+                item: Node
                 update_nodes_and_relations(tx, item, _buffer)
 
 

@@ -1,10 +1,10 @@
 import datetime as dt
 from abc import abstractmethod
-from ._basic import BasicNodeInterface, DbRelation
+from ._entity import Node, Relation
 from ._scheme import NODES
 
 
-class LegislativeTerm(BasicNodeInterface):
+class LegislativeTerm(Node):
     def __init__(self, content):
         super().__init__(content, NODES.LEGISLATIVE_TERM)
 
@@ -24,7 +24,7 @@ class LegislativeTerm(BasicNodeInterface):
         pass
 
 
-class Thread(BasicNodeInterface):
+class Thread(Node):
     def __init__(self, content):
         super().__init__(content, NODES.THREAD)
 
@@ -45,7 +45,7 @@ class Thread(BasicNodeInterface):
         pass
 
 
-class Paper(BasicNodeInterface):
+class Paper(Node):
     def __init__(self, content):
         super().__init__(content, NODES.PAPER)
 
@@ -104,7 +104,7 @@ class Paper(BasicNodeInterface):
         pass
 
 
-class OparlPerson(BasicNodeInterface):
+class OparlPerson(Node):
     def __init__(self, content):
         super().__init__(content, NODES.OPARL_PERSON)
 
@@ -145,7 +145,7 @@ class OparlPerson(BasicNodeInterface):
         pass
 
 
-class OparlOrganization(BasicNodeInterface):
+class OparlOrganization(Node):
     def __init__(self, content):
         super().__init__(content, NODES.OPARL_ORGANIZATION)
 
@@ -208,7 +208,7 @@ class OparlOrganization(BasicNodeInterface):
         pass
 
 
-class OparlLocation(BasicNodeInterface):
+class OparlLocation(Node):
     def __init__(self, content):
         super().__init__(content, NODES.OPARL_LOCATION)
 
@@ -243,7 +243,7 @@ class OparlLocation(BasicNodeInterface):
         pass
 
 
-class Consultation(DbRelation):
+class Consultation(Relation):
 
     @abstractmethod
     def oparl_id(self) -> str:
@@ -266,7 +266,7 @@ class Consultation(DbRelation):
         pass
 
 
-class Membership(DbRelation):
+class Membership(Relation):
     @abstractmethod
     def oparl_id(self) -> str:
         """define oparl id property"""

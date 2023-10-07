@@ -1,4 +1,4 @@
-from ._basic import DbAttributeFactory, DbRelationFactory
+from ._factory import PropertyFactory, RelationFactory
 
 
 class LABELS:
@@ -27,31 +27,31 @@ class NODES:
 
 
 class RELATIONS:
-    CONCERNED = DbRelationFactory('CONCERNED')  # Consultation -> Paper -> Thread
-    DIRECTED = DbRelationFactory('DIRECTED')  # Organization | Person -> Paper
-    IN_PERIOD = DbRelationFactory('IN_PERIOD')  # Thread -> Legis_term
-    IS_MEMBER = DbRelationFactory('IS_MEMBER')  # Person -> Organization
-    LOCATED = DbRelationFactory('LOCATED')  # Organization -> Location
-    PARTICIPATED = DbRelationFactory('PARTICIPATED')
-    INDUCED = DbRelationFactory('INDUCED')  # Organization | Person -> Paper
+    CONCERNED = RelationFactory('CONCERNED')  # Consultation -> Paper -> Thread
+    DIRECTED = RelationFactory('DIRECTED')  # Organization | Person -> Paper
+    IN_PERIOD = RelationFactory('IN_PERIOD')  # Thread -> Legis_term
+    IS_MEMBER = RelationFactory('IS_MEMBER')  # Person -> Organization
+    LOCATED = RelationFactory('LOCATED')  # Organization -> Location
+    PARTICIPATED = RelationFactory('PARTICIPATED')
+    INDUCED = RelationFactory('INDUCED')  # Organization | Person -> Paper
 
 
 class ATTRIBUTES:
-    AUTHORITATIVE = DbAttributeFactory('authoritative')
-    CLASSIFICATION = DbAttributeFactory('classification')
-    DESCRIPTION = DbAttributeFactory('description')
-    END_DATE = DbAttributeFactory('end_date')
-    LOCALITY = DbAttributeFactory('locality')
-    MODIFIED = DbAttributeFactory('modified')
-    NAME = DbAttributeFactory('name')
-    ORGANIZATION_TYPE = DbAttributeFactory('organization_type')
-    OPARL_ID = DbAttributeFactory('oparl_id')
-    ORIGIN_DATE = DbAttributeFactory('origin_date')
-    PAPER_TYPE = DbAttributeFactory('paper_type')
-    POSTAL_CODE = DbAttributeFactory('postal_code')
-    REFERENCE = DbAttributeFactory('reference')
-    ROLE = DbAttributeFactory('role')
-    START_DATE = DbAttributeFactory('start_date')
-    STREET_ADDRESS = DbAttributeFactory('street_address')
-    VOTING_RIGHT = DbAttributeFactory('voting_right')
-    WEB_URL = DbAttributeFactory('web_url')
+    AUTHORITATIVE = PropertyFactory('authoritative')
+    CLASSIFICATION = PropertyFactory('classification')
+    DESCRIPTION = PropertyFactory('description')
+    END_DATE = PropertyFactory('end_date')
+    LOCALITY = PropertyFactory('locality')
+    MODIFIED = PropertyFactory('modified')
+    NAME = PropertyFactory('name')
+    ORGANIZATION_TYPE = PropertyFactory('organization_type')
+    OPARL_ID = PropertyFactory('oparl_id')
+    ORIGIN_DATE = PropertyFactory('origin_date')
+    PAPER_TYPE = PropertyFactory('paper_type')
+    POSTAL_CODE = PropertyFactory('postal_code')
+    REFERENCE = PropertyFactory('reference')
+    ROLE = PropertyFactory('role')
+    START_DATE = PropertyFactory('start_date')
+    STREET_ADDRESS = PropertyFactory('street_address')
+    VOTING_RIGHT = PropertyFactory('voting_right')
+    WEB_URL = PropertyFactory('web_url')

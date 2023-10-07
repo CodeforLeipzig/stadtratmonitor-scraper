@@ -1,5 +1,5 @@
 # from ..graph import node_factory as neo4j_node_factory
-from ..graph import BasicNodeInterface, DbAttribute, DbRelation
+from ..graph import Node, Property, Relation
 
 
 neo4j_node_factory = lambda x: None
@@ -24,7 +24,7 @@ def full_merge(tx, node):
     return neo4j_node_factory(result)
 
 
-def create_relation(tx, node: DbRelation):
+def create_relation(tx, node: Relation):
     s_ref, source = 'b', node.source
     t_ref, target = 'a', node.target
     r_ref = 'r'
@@ -46,7 +46,7 @@ def delete_all(tx, *_):
     return tx.run('MATCH (n) DETACH DELETE n').to_eager_result()
 
 
-def prepare_match_by_primary(node_interface: BasicNodeInterface, ref='n') -> tuple[str, dict]:
+def prepare_match_by_primary(node_interface: Node, ref='n') -> tuple[str, dict]:
     prim_keys = list()
     parameter = dict()
 
@@ -64,7 +64,7 @@ def prepare_match_by_primary(node_interface: BasicNodeInterface, ref='n') -> tup
     return statement, parameter
 
 
-def prepare_merge_by_primary(node_interface: BasicNodeInterface, ref='n') -> tuple[str, dict]:
+def prepare_merge_by_primary(node_interface: Node, ref='n') -> tuple[str, dict]:
     parameter = dict()
     keys = list()
 
@@ -81,7 +81,7 @@ def prepare_merge_by_primary(node_interface: BasicNodeInterface, ref='n') -> tup
     return statement, parameter
 
 
-def prepare_create_set(node_interface: BasicNodeInterface, ref='n'):
+def prepare_create_set(node_interface: Node, ref='n'):
     parameter = dict()
     keys = list()
 
@@ -104,7 +104,7 @@ def prepare_return(*args) -> (str, dict):
         if isinstance(arg, tuple):
             ref = arg[0]
             for a in arg[1:]:
-                a: DbAttribute
+                a: Property
                 pieces.append(f'{ref}.{a.key()}')
 
     return f'RETURN {",".join(pieces)}', {}

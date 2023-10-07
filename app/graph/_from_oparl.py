@@ -1,5 +1,5 @@
 from ._scheme import RELATIONS, ATTRIBUTES
-from ._basic import BasicNodeInterface
+from ._entity import Node
 from . import _interfaces as ifs
 from .. import oparl
 
@@ -255,7 +255,7 @@ class OparlLocationNode(ifs.OparlLocation):
         return self._content.street_address
 
 
-factory_mapping = {oparl.Basic: BasicNodeInterface,
+factory_mapping = {oparl.Basic: Node,
                    oparl.Location: OparlLocationNode,
                    oparl.Organization: OparlOrganizationNode,
                    oparl.Paper: PaperNode,
