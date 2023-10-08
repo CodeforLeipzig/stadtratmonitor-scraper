@@ -1,5 +1,5 @@
-from _basic import Property, PropertyHook
-from _entity import Relation, RelationHook
+from ._basic import Property, PropertyHook
+from ._entity import Relation, RelationHook
 
 
 class PropertyFactory:
