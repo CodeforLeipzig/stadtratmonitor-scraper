@@ -35,7 +35,7 @@ class Entity:
         return anchor if anchor else ''
 
     def label_str(self):
-        labels = self._item.labels
+        labels = self._item.labels if self._item else []
         return ':' + ':'.join(labels) if labels else ''
 
     def properties_str(self, kv_seperator: str, anchor_dot: bool):

@@ -12,6 +12,12 @@ class CypherAbc:
         self.current_line = [chunk]
         self.lines.append(self.current_line)
 
+    def purge(self) -> tuple[str, dict]:
+        lines = '\n'.join((' '.join(line) for line in self.lines))
+        parameter = self.parameters
+        self.parameters, self.lines, self.current_line = {}, [], []
+        return lines, parameter
+
 
 class Cypher(CypherAbc):
     def __init__(self):
@@ -35,19 +41,25 @@ class Cypher(CypherAbc):
         self.newline('CREATE')
         return self
 
-    @property
-    def set(self):
-        self.newline('SET')
+    def set(self, anchor, *properties):
+        p_str = Entity(self, anchor, None, properties).properties_str('=', anchor_dot=True)
+        if p_str:
+            self.newline('SET')
+            self.current_line.append(p_str)
         return self
 
-    @property
-    def on_merge(self):
-        self.newline('ON MERGE')
+    def on_merge(self, anchor, *properties):
+        p_str = Entity(self, anchor, None, properties).properties_str('=', anchor_dot=True)
+        if p_str:
+            self.newline('ON MERGE')
+            self.current_line.append(p_str)
         return self
 
-    @property
-    def on_create(self):
-        self.newline('ON CREATE')
+    def on_create(self, anchor, *properties):
+        p_str = Entity(self, anchor, None, properties).properties_str('=', anchor_dot=True)
+        if p_str:
+            self.newline('ON CREATE')
+            self.current_line.append(p_str)
         return self
 
     @property
@@ -69,7 +81,17 @@ class Cypher(CypherAbc):
         self.current_line.append(chunk)
         return self
 
+    def relation_to(self, anchor, item, *properties):
+        chunk = Entity(self, anchor, item, properties).to_relation()
+        self.current_line.append(f'- {chunk} ->')
+        return self
+
+    def relation_from(self, anchor, item, *properties):
+        chunk = Entity(self, anchor, item, properties).to_relation()
+        self.current_line.append(f'<- {chunk} -')
+        return self
+
     def relation(self, anchor, item, *properties):
         chunk = Entity(self, anchor, item, properties).to_relation()
-        self.current_line.append(chunk)
+        self.current_line.append(f'- {chunk} -')
         return self
