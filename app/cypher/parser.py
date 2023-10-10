@@ -39,14 +39,14 @@ class Entity:
         return ':' + ':'.join(labels) if labels else ''
 
     def properties_str(self, kv_seperator: str, anchor_dot: bool):
-        strings, params = [], self._cypher.parameters
-        tk_sep = self._cypher.tk_seperator
+        strings, params = [], self._cypher._parameters
+        tk_sep = self._cypher._tk_seperator
         anchor_str = self.anchor_str()
         anchor_dot = anchor_dot and anchor_str
 
         for prop in extract(DbProperty, *self._properties):
             key, value = prop.key(), prop.value()
-            tag = next(self._cypher.tag_generator)
+            tag = next(self._cypher._tag_generator)
 
             tagged_key = f'{tag}{tk_sep}{key}'  # a_name
 

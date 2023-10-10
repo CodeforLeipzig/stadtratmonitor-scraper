@@ -25,13 +25,10 @@ def scrapping(db_con, oparl_):
     for item in oparl_.pagination():
         paper_node = oparl_node_factory(item)
 
-        cypher = Cypher()
         tag = tag_generator()
         paper_tag = next(tag)
-
-        cypher.merge.node(paper_tag, paper_node, paper_node.primary_keys())
-        print(paper_node)
-        print(*paper_node.non_primary_keys())
+        cypher = Cypher()
+        cypher.merge(paper_tag, paper_node, paper_node.primary_keys())
         cypher.set(paper_tag, paper_node.non_primary_keys())
 
         for relation in paper_node.relations():
@@ -41,15 +38,15 @@ def scrapping(db_con, oparl_):
             new_tag = next(tag)
             new_node = target if l_to_r else source
 
-            cypher.merge.node(new_tag, new_node, new_node.primary_keys())
+            cypher.merge(new_tag, new_node, new_node.primary_keys())
             cypher.set(new_tag, new_node.non_primary_keys())
 
             # left_node, right_node = (source, target) if l_to_r else (target, source)
             left_tag, right_tag = (paper_tag, new_tag) if l_to_r else (new_tag, paper_tag)
             relation_tag = next(tag)
 
-            cypher.merge.node(left_tag, None). \
-                relation_to(relation_tag, relation, relation.primary_keys()). \
+            cypher.merge(left_tag, None). \
+                related_to(relation_tag, relation, relation.primary_keys()). \
                 node(right_tag, None)
 
             cypher.set(relation_tag, relation.non_primary_keys())
@@ -58,7 +55,6 @@ def scrapping(db_con, oparl_):
         print(s)
         for k, v in p.items():
             print(f'key: {k}, value: {v}')
-
         continue
 
         with db_con.session() as session:
