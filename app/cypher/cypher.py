@@ -75,7 +75,7 @@ class ReturnCommand(CypherBase):
 
 class AnchorString(CypherBase):
     def anchors(self, *anchors):
-        [self._stage(anchor) for anchor in anchors]
+        self._stage(', '.join(anchors))
         self: NewlineCommands
         return self
 
