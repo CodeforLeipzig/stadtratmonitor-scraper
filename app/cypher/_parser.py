@@ -1,29 +1,13 @@
-from ..graph import Property as DbProperty
+from .. import graph
+from ._basic import CypherBase, extract
 
 
-def extract(cls, *args):
-    for arg in args:
-        if isinstance(arg, cls):
-            yield arg
-        else:
-            for sub_arg in extract(cls, *arg):
-                yield sub_arg
+class EntityParser:
+    _cypher: CypherBase
+    _anchor: str
+    _item: graph.Entity
+    _properties: tuple[graph.Property]
 
-
-def tag_generator():
-    for prev in (prev for sub in (('',), tag_generator()) for prev in sub):
-        for i in range(97, 123):
-            yield f'{prev}{chr(i)}'
-
-
-class Cypher:
-    tag_generator: callable
-    tk_seperator: str
-    statements: list
-    parameters: dict
-
-
-class Entity:
     def __init__(self, cypher, anchor, item, properties):
         self._cypher = cypher
         self._anchor = anchor
@@ -38,13 +22,14 @@ class Entity:
         labels = self._item.labels if self._item else []
         return ':' + ':'.join(labels) if labels else ''
 
+    # noinspection PyProtectedMember
     def properties_str(self, kv_seperator: str, anchor_dot: bool):
         strings, params = [], self._cypher._parameters
         tk_sep = self._cypher._tk_seperator
         anchor_str = self.anchor_str()
         anchor_dot = anchor_dot and anchor_str
 
-        for prop in extract(DbProperty, *self._properties):
+        for prop in extract(graph.Property, *self._properties):
             key, value = prop.key(), prop.value()
             tag = next(self._cypher._tag_generator)
 
