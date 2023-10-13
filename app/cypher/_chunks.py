@@ -26,7 +26,7 @@ class PropertyCommands(CypherBase, abstract.PropertyCommand):
         prop_str = EntityParser(self, anchor, None, properties).properties_str('=', anchor_dot=True)
         if prop_str:
             self._newline(cmd)
-            self._stage(prop_str)
+            self._stage_chunk(prop_str)
         self: abstract.NewlineOrReturn
         return self
 
@@ -41,16 +41,27 @@ class PropertyCommands(CypherBase, abstract.PropertyCommand):
 
 
 class ReturnCommand(CypherBase, abstract.ReturnCommand):
-    @property
-    def return_(self) -> abstract.AnchorOrProperty:
-        self._newline('RETURN')
-        self: abstract.AnchorOrProperty
+    def __prepare_return(self):
+        if self._current_line[0] != 'RETURN':
+            self._newline('RETURN')
+
+    def return_anchors(self, *anchors):
+        self.__prepare_return()
+        anchors = anchors if anchors else self._anchors
+        self: abstract.AnchorString
+        AnchorString.anchors(self, *anchors)
+        return self
+
+    def return_properties(self, anchor, *properties):
+        self.__prepare_return()
+        entity = EntityParser(self, anchor, None, properties).properties_str('', anchor_dot=True)
+        self._stage_chunk(entity)
         return self
 
 
 class AnchorString(CypherBase, abstract.AnchorString):
     def anchors(self, *anchors) -> abstract.NewlineCommand:
-        self._stage(', '.join(anchors))
+        self._stage_chunk(', '.join(anchors))
         self: abstract.NewlineCommand
         return self
 
@@ -58,7 +69,7 @@ class AnchorString(CypherBase, abstract.AnchorString):
 class PropertyString(CypherBase, abstract.PropertyString):
     def properties(self, anchor='', *properties) -> abstract.NewlineCommand:
         entity = EntityParser(self, anchor, None, properties).properties_str('=', anchor_dot=True)
-        self._stage(entity)
+        self._stage_chunk(entity)
         self: abstract.NewlineCommand
         return self
 
@@ -66,7 +77,8 @@ class PropertyString(CypherBase, abstract.PropertyString):
 class NodeString(CypherBase, abstract.NodeString):
     def node(self, anchor, item, *properties) -> abstract.NewlineOrRelationOrReturn:
         chunk = EntityParser(self, anchor, item, properties).to_node()
-        self._stage(chunk)
+        self._stage_chunk(chunk)
+        self._stage_anchor(anchor)
         self: abstract.NewlineOrRelationOrReturn
         return self
 
@@ -74,7 +86,8 @@ class NodeString(CypherBase, abstract.NodeString):
 class RelationString(CypherBase, abstract.RelationString):
     def __relation_str(self, s, anchor, item, properties, e):
         chunk = EntityParser(self, anchor, item, properties).to_relation()
-        self._stage(f'{s} {chunk} {e}')
+        self._stage_chunk(f'{s} {chunk} {e}')
+        self._stage_anchor(anchor)
         self: abstract.NodeString
         return self
 

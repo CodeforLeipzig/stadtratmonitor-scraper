@@ -45,7 +45,7 @@ class Updater:
         self.update_node(node)
         for relation in node.relations():
             self.update_relation(relation)
-        self.cypher.return_.anchors(*self.memory.anchors())
+        self.cypher.return_anchors()
         return self.cypher
 
     def update_node(self, node):

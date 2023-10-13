@@ -18,17 +18,22 @@ def tag_generator():
 
 class CypherBase(abstract.CypherABC):
     def __init__(self):
-        self._current_line = []
-        self._lines = []
-        self._parameters = {}
+        self._anchors = set()
+        self._current_line = list()
+        self._lines = list()
+        self._parameters = dict()
         self._tag_generator = tag_generator()
 
     def _newline(self, chunk):
         self._current_line = [chunk]
         self._lines.append(self._current_line)
 
-    def _stage(self, chunk):
+    def _stage_chunk(self, chunk):
         self._current_line.append(chunk)
+
+    def _stage_anchor(self, anchor):
+        if anchor:
+            self._anchors.add(anchor)
 
     def build(self) -> tuple[str, dict]:
         lines = '\n'.join((' '.join(line) for line in self._lines))
@@ -37,7 +42,7 @@ class CypherBase(abstract.CypherABC):
 
     def purge(self) -> tuple[str, dict]:
         lines, parameter = self.build()
-        self._parameters, self._lines, self._current_line = {}, [], []
+        self.__init__()
         return lines, parameter
 
     def print(self):
@@ -47,7 +52,6 @@ class CypherBase(abstract.CypherABC):
 
     def print_merged(self):
         statement, parameter = self.build()
-        merged = str()
         for key, value in parameter.items():
             statement = statement.replace(f'${key}', str(value))
         print(statement)

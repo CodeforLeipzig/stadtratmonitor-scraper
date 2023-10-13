@@ -1,7 +1,6 @@
 from app.database import connection, Session
-from app.graph import Node, oparl_node_factory
+from app.graph import oparl_node_factory
 from app.oparl import Oparl
-from app.cypher import Cypher, tag_generator
 from app.update_database import Updater
 
 
@@ -11,6 +10,7 @@ def scrapping(db_con, oparl_):
         paper_node = oparl_node_factory(item)
         cypher = updater(paper_node)
         cypher.print()
+        cypher.purge()
         continue
 
         with db_con.session() as session:
