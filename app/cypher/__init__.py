@@ -9,7 +9,8 @@ class Cypher(
     _chunks.ReturnCommand,
     _chunks.NodeString,
     _chunks.RelationString,
-    _chunks.PropertyString
+    _chunks.PropertyString,
+    _chunks.AnchorString
 ): ...
 
 

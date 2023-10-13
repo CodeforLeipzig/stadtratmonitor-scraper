@@ -1,60 +1,16 @@
-from collections import deque
 from app.database import connection, Session
-from app.graph import Node, Relation, oparl_node_factory
-from app.database.statements import create_relation
+from app.graph import Node, oparl_node_factory
 from app.oparl import Oparl
 from app.cypher import Cypher, tag_generator
-
-
-def update_nodes_and_relations(tx, node: Node, buffer=None, /):
-    _buffer = buffer if buffer else deque()
-    for relation in node.relations():
-        relation: Relation
-        if relation in _buffer:
-            continue
-        else:
-            result = create_relation(tx, relation)
-            print(result)
-            _buffer.appendleft(relation)
-            for item in (relation.source, relation.target):
-                item: Node
-                update_nodes_and_relations(tx, item, _buffer)
+from app.update_database import Update
 
 
 def scrapping(db_con, oparl_):
+    updater = Update()
     for item in oparl_.pagination():
         paper_node = oparl_node_factory(item)
-
-        tag = tag_generator()
-        paper_tag = next(tag)
-        cypher = Cypher()
-        cypher.merge(paper_tag, paper_node, paper_node.primary_keys())
-        cypher.set(paper_tag, paper_node.non_primary_keys())
-
-        for relation in paper_node.relations():
-            source: Node = relation.source
-            target: Node = relation.target
-            l_to_r = source == paper_node
-            new_tag = next(tag)
-            new_node = target if l_to_r else source
-
-            cypher.merge(new_tag, new_node, new_node.primary_keys())
-            cypher.set(new_tag, new_node.non_primary_keys())
-
-            # left_node, right_node = (source, target) if l_to_r else (target, source)
-            left_tag, right_tag = (paper_tag, new_tag) if l_to_r else (new_tag, paper_tag)
-            relation_tag = next(tag)
-
-            cypher.merge(left_tag, None). \
-                related_to(relation_tag, relation, relation.primary_keys()). \
-                node(right_tag, None)
-
-            cypher.set(relation_tag, relation.non_primary_keys())
-
-        s, p = cypher.purge()
-        print(s)
-        for k, v in p.items():
-            print(f'key: {k}, value: {v}')
+        cypher = updater(paper_node)
+        cypher.print()
         continue
 
         with db_con.session() as session:

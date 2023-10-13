@@ -30,13 +30,24 @@ class CypherBase(abstract.CypherABC):
     def _stage(self, chunk):
         self._current_line.append(chunk)
 
-    def purge(self) -> tuple[str, dict]:
+    def build(self) -> tuple[str, dict]:
         lines = '\n'.join((' '.join(line) for line in self._lines))
         parameter = self._parameters
+        return lines, parameter
+
+    def purge(self) -> tuple[str, dict]:
+        lines, parameter = self.build()
         self._parameters, self._lines, self._current_line = {}, [], []
         return lines, parameter
 
     def print(self):
-        statement, parameter = self.purge()
+        statement, parameter = self.build()
         print(statement)
         [print(f'key: {key}, value:{value}') for key, value in parameter.items()]
+
+    def print_merged(self):
+        statement, parameter = self.build()
+        merged = str()
+        for key, value in parameter.items():
+            statement = statement.replace(f'${key}', str(value))
+        print(statement)

@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from ._abc_cypher import CypherABC
+from ._cypher import CypherABC
 
 
 class EntityCommand(CypherABC):
