@@ -25,4 +25,8 @@ class PropertyCommand(CypherABC):
 
 
 class ReturnCommand(CypherABC):
-    return_: object
+    @abstractmethod
+    def return_anchors(self, *anchors): ...
+
+    @abstractmethod
+    def return_properties(self, anchor, *properties): ...
