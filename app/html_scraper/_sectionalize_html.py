@@ -40,14 +40,14 @@ def remove_symbols(chunks: Iterable[str], *filters: str) -> str:
     return ' '.join(survivors)
 
 
-def process_header(tree) -> Generator[Section]:
+def process_header(tree) -> Generator:
     for row in tree.xpath('.//div[@id="headLeft"]//div[@class="row"]'):
         title = remove_symbols(row.xpath('.//dt//text()'), *FILTERS, ':', '\d')
         content = remove_symbols(row.xpath('.//dd//text()'), *FILTERS)
         yield Section(title, content)
 
 
-def process_docpart(tree) -> Generator[Section]:
+def process_docpart(tree) -> Generator:
     current_section = WipSection()
 
     for line in process_docpart_lines(tree):
