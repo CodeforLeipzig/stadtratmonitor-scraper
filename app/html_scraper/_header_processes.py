@@ -15,11 +15,11 @@ def clean_outer_spaces(chunk: str):
 
 def split_by_semicolon_or_comma(chunk: str):
     if ';' in chunk:
-        for chunk in map(clean_outer_spaces, chunk.split(';')):
-            yield chunk
-    elif ',' in chunk and 'und' not in chunk:
-        for chunk in map(clean_outer_spaces, chunk.split(',')):
-            yield chunk
+        for c in map(clean_outer_spaces, chunk.split(';')):
+            yield c
+    elif ',' in chunk and ' und ' not in chunk:
+        for c in map(clean_outer_spaces, chunk.split(',')):
+            yield c
     else:
         yield chunk
 
@@ -36,10 +36,10 @@ def no_operation(chunk: str):
     yield chunk
 
 
-pipelines = {'Beteiligt': split_by_semicolon_or_comma,
+processes = {'Beteiligt': split_by_semicolon_or_comma,
              'Betreff': ignore,
              'Einreicher': split_by_semicolon_or_comma,
-             'Federführend': no_operation,
+             'Federführend': split_by_semicolon_or_comma,
              'Status': extract_from_parenthesis,
              'Vorlageanlass': no_operation,
              'Vorlageart': no_operation}
