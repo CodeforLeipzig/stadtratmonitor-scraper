@@ -1,10 +1,14 @@
+from ._sectionalize_html import Section
+from typing import Generator
+
+
 def ignore(_):
     # noinspection PyUnreachableCode
     if False:
         yield
 
 
-def clean_outer_spaces(chunk: str):
+def clean_outer_spaces(chunk: str) -> str:
     if chunk.startswith(' '):
         return clean_outer_spaces(chunk[1:])
     elif chunk.endswith(' '):
@@ -13,27 +17,27 @@ def clean_outer_spaces(chunk: str):
         return chunk
 
 
-def split_by_semicolon_or_comma(chunk: str):
+def split_by_semicolon_or_comma(section: Section) -> Generator[Section, None, None]:
+    chunk = section.content
     if ';' in chunk:
-        for c in map(clean_outer_spaces, chunk.split(';')):
-            yield c
+        yield from map(clean_outer_spaces, chunk.split(';'))
     elif ',' in chunk and ' und ' not in chunk:
-        for c in map(clean_outer_spaces, chunk.split(',')):
-            yield c
+        yield from map(clean_outer_spaces, chunk.split(','))
     else:
-        yield chunk
+        yield section
 
 
-def extract_from_parenthesis(chunk: str):
+def extract_from_parenthesis(section: Section) -> Generator[Section, None, None]:
+    chunk = section.content
     if '(' in chunk and ')' in chunk:
         start, end = chunk.index('(') + 1, chunk.index(')')
-        yield chunk[start:end]
+        yield Section(section.title, chunk[start:end])
     else:
-        yield chunk
+        yield section
 
 
-def no_operation(chunk: str):
-    yield chunk
+def no_operation(section: Section) -> Generator[Section, None, None]:
+    yield section
 
 
 processes = {'Beteiligt': split_by_semicolon_or_comma,
