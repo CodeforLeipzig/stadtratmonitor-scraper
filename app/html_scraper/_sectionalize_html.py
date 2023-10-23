@@ -16,7 +16,7 @@ class WipSection:
         self.title: list = [title] if title else []
         self.content: list = [content] if content else []
 
-    def finalize(self):
+    def finalize(self) -> Section:
         if not self.title and self.content:
             self.title.append(HEADLINES[0])
         return Section(' '.join(self.title), ' '.join(self.content))
@@ -25,11 +25,15 @@ class WipSection:
         return self.title or self.content
 
 
-def process_html_page(page_content: bytes) -> list[Section]:
-    tree = lxml.html.fromstring(page_content)
-    headers = (section for section in process_header(tree))
-    docparts = (section for section in process_docpart(tree))
-    return [*headers, *docparts]
+class HtmlSections:
+    def __init__(self, page: bytes):
+        self.tree = lxml.html.fromstring(page)
+
+    def headers(self) -> Generator[Section, None, None]:
+        yield from process_header(self.tree)
+
+    def docparts(self) -> Generator[Section, None, None]:
+        yield from process_docpart(self.tree)
 
 
 def remove_symbols(chunks: Iterable[str], *filters: str) -> str:
@@ -40,14 +44,14 @@ def remove_symbols(chunks: Iterable[str], *filters: str) -> str:
     return ' '.join(survivors)
 
 
-def process_header(tree) -> Generator:
+def process_header(tree) -> Generator[Section, None, None]:
     for row in tree.xpath('.//div[@id="headLeft"]//div[@class="row"]'):
         title = remove_symbols(row.xpath('.//dt//text()'), *FILTERS, ':', '\d')
         content = remove_symbols(row.xpath('.//dd//text()'), *FILTERS)
         yield Section(title, content)
 
 
-def process_docpart(tree) -> Generator:
+def process_docpart(tree) -> Generator[Section, None, None]:
     current_section = WipSection()
 
     for line in process_docpart_lines(tree):
