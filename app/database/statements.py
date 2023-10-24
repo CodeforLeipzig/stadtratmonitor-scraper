@@ -4,6 +4,7 @@ from ..graph import Node, Property, Relation
 
 neo4j_node_factory = lambda x: None
 
+
 def retrieve_single(tx, node):
     ref = 'n'
     match_, parameter = prepare_match_by_primary(node, ref=ref)
