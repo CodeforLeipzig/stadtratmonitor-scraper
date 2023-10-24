@@ -34,6 +34,7 @@ def database_connection():
         if exception:
             raise exception
 
+
 if __name__ == '__main__':
     database = Database(**neo4j_config())
     print(database.driver.execute_query('match (n) return count(n)'))
