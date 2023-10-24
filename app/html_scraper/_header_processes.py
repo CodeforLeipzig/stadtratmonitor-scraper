@@ -20,9 +20,11 @@ def clean_outer_spaces(chunk: str) -> str:
 def split_by_semicolon_or_comma(section: Section) -> Generator[Section, None, None]:
     chunk = section.content
     if ';' in chunk:
-        yield from map(clean_outer_spaces, chunk.split(';'))
+        contents = map(clean_outer_spaces, chunk.split(';'))
+        yield from (Section(section.title, content) for content in contents)
     elif ',' in chunk and ' und ' not in chunk:
-        yield from map(clean_outer_spaces, chunk.split(','))
+        contents = map(clean_outer_spaces, chunk.split(','))
+        yield from (Section(section.title, content) for content in contents)
     else:
         yield section
 

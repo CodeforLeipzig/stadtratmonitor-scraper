@@ -30,10 +30,10 @@ class HtmlSections:
         self.tree = lxml.html.fromstring(page)
 
     def headers(self) -> Generator[Section, None, None]:
-        yield from process_header(self.tree)
+        yield from extract_header(self.tree)
 
     def docparts(self) -> Generator[Section, None, None]:
-        yield from process_docpart(self.tree)
+        yield from extract_docpart(self.tree)
 
 
 def remove_symbols(chunks: Iterable[str], *filters: str) -> str:
@@ -44,14 +44,14 @@ def remove_symbols(chunks: Iterable[str], *filters: str) -> str:
     return ' '.join(survivors)
 
 
-def process_header(tree) -> Generator[Section, None, None]:
+def extract_header(tree) -> Generator[Section, None, None]:
     for row in tree.xpath('.//div[@id="headLeft"]//div[@class="row"]'):
         title = remove_symbols(row.xpath('.//dt//text()'), *FILTERS, ':', '\d')
         content = remove_symbols(row.xpath('.//dd//text()'), *FILTERS)
         yield Section(title, content)
 
 
-def process_docpart(tree) -> Generator[Section, None, None]:
+def extract_docpart(tree) -> Generator[Section, None, None]:
     current_section = WipSection()
 
     for line in process_docpart_lines(tree):
