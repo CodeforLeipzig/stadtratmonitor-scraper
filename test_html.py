@@ -1,8 +1,10 @@
 from app.oparl.fakerequest import FakeHtmlRequest as request
 from app.html_scraper._sectionalize_html import HtmlSections
-from app.html_scraper._known_headlines import Headers
+from app.html_scraper._known_headlines import Headers, Headlines
 
+HEADLINES = Headlines()
 HEADERS = Headers()
+
 # from app.html_scraper._header_processes import processes
 
 if __name__ == '__main__':
@@ -18,5 +20,6 @@ if __name__ == '__main__':
         html_sections = HtmlSections(page)
         for head in html_sections.headers():
             [print(_) for _ in HEADERS(head)]
-            pass
-        [print(docpart) for docpart in html_sections.docparts()]
+        for docpart in html_sections.docparts():
+            print('x')
+            [print(_) for _ in HEADLINES(docpart)]

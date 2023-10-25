@@ -1,10 +1,10 @@
 from functools import reduce
 from ._header_processes import (split_by_semicolon_or_comma, clean_outer_spaces, extract_from_parenthesis, ignore,
-                                no_operation)
+                                no_operation, Section)
 
 
 def caller(a, b):
-    yield from (y for x in a for y in b(x))
+    return (x for sub in a for x in b(sub))
 
 
 class Process:
@@ -14,7 +14,7 @@ class Process:
 
     def __call__(self, section):
         # noinspection PyTypeChecker
-        yield from reduce(caller, self.funcs, (section,))
+        return reduce(caller, self.funcs, (section,))
 
 
 class ProcessMap:
@@ -24,15 +24,21 @@ class ProcessMap:
         for opt in self.options:
             if opt.name == section.title:
                 return opt(section)
+        print(f'NOT FOUND: {section.title}')
+        # yield section
 
 
 P = Process
 
 
+def test(x):
+    yield x
+    yield Section(x.title, 'SDFGHJKL')
+
 class Headers(ProcessMap):
     options = (
         P('Betreff', ignore),
-        P('Status', extract_from_parenthesis),
+        P('Status', extract_from_parenthesis, test),
         P('Vorlageart', no_operation),
         P('Federführend', split_by_semicolon_or_comma),
         P('Einreicher', split_by_semicolon_or_comma),
