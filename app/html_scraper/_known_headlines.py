@@ -1,6 +1,6 @@
 from functools import reduce
-from ._header_processes import (split_by_semicolon_or_comma, clean_outer_spaces, extract_from_parenthesis, ignore,
-                                no_operation, Section)
+from ._basic import Section
+from ._header_processes import (split_by_semicolon_or_comma, extract_from_parenthesis, ignore, no_operation)
 
 
 def caller(a, b):
@@ -12,7 +12,7 @@ class Process:
         self.name = name
         self.funcs = funcs
 
-    def __call__(self, section):
+    def __call__(self, section: Section):
         # noinspection PyTypeChecker
         return reduce(caller, self.funcs, (section,))
 
@@ -20,25 +20,23 @@ class Process:
 class ProcessMap:
     options: tuple[Process]
 
-    def __call__(self, section):
+    def __call__(self, section: Section):
         for opt in self.options:
             if opt.name == section.title:
                 return opt(section)
         print(f'NOT FOUND: {section.title}')
-        # yield section
+
+    def names(self):
+        return (option.name for option in self.options)
 
 
 P = Process
 
 
-def test(x):
-    yield x
-    yield Section(x.title, 'SDFGHJKL')
-
 class Headers(ProcessMap):
     options = (
         P('Betreff', ignore),
-        P('Status', extract_from_parenthesis, test),
+        P('Status', extract_from_parenthesis),
         P('Vorlageart', no_operation),
         P('Federführend', split_by_semicolon_or_comma),
         P('Einreicher', split_by_semicolon_or_comma),
@@ -90,3 +88,7 @@ class Headlines(ProcessMap):
         P('Zusammenfassung', ),
         P('Rechtliche Konsequenzen', )
     )
+
+
+HEADERS = Headers()
+HEADLINES = Headlines()

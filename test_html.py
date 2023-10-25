@@ -19,7 +19,6 @@ if __name__ == '__main__':
         page = request.get(e)
         html_sections = HtmlSections(page)
         for head in html_sections.headers():
-            [print(_) for _ in HEADERS(head)]
+            print(head)
         for docpart in html_sections.docparts():
-            print('x')
-            [print(_) for _ in HEADLINES(docpart)]
+            print(docpart)

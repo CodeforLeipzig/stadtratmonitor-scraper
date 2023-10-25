@@ -1,8 +1,8 @@
-from ._sectionalize_html import Section
+from ._basic import Section
 from typing import Generator
 
 
-def ignore(_):
+def ignore(_: Section):
     # noinspection PyUnreachableCode
     if False:
         yield
@@ -40,12 +40,3 @@ def extract_from_parenthesis(section: Section) -> Generator[Section, None, None]
 
 def no_operation(section: Section) -> Generator[Section, None, None]:
     yield section
-
-
-processes = {'Beteiligt': split_by_semicolon_or_comma,
-             'Betreff': ignore,
-             'Einreicher': split_by_semicolon_or_comma,
-             'Federführend': split_by_semicolon_or_comma,
-             'Status': extract_from_parenthesis,
-             'Vorlageanlass': no_operation,
-             'Vorlageart': no_operation}
