@@ -2,10 +2,8 @@ from ._basic import Section
 from typing import Generator
 
 
-def ignore(_: Section):
-    # noinspection PyUnreachableCode
-    if False:
-        yield
+def ignore(_):
+    return ()
 
 
 def clean_outer_spaces(chunk: str) -> str:
