@@ -41,7 +41,8 @@ class Headers(ProcessMap):
         P('Federführend', split_by_semicolon_or_comma),
         P('Einreicher', split_by_semicolon_or_comma),
         P('Vorlageanlass', no_operation),
-        P('Beteiligt', split_by_semicolon_or_comma)
+        P('Beteiligt', split_by_semicolon_or_comma),
+        P('Ziele', split_by_semicolon_or_comma)
     )
 
 
@@ -81,10 +82,22 @@ class Headlines(ProcessMap):
         P('II. Begründung Nichtöffentlichkeit', ),
         P('III.  Strategische Ziele', ),
         P('IV. Sachverhalt', ),
+        P('Begründung Nichtöffentlichkeit', ),
+        P('Eilbedürftigkeitsbegründung', ),
+        P('Strategische Ziele'),
+        P('I.'),
+        P('II.'),
+        P('III.'),
+        P('IV.'),
         P('1. Begründung Kreuz auf dem Deckblatt', ),
+        P('2. Realisierungs- / Zeithorizont (entfällt bei Ablehnung des Antrags)', ),
+        P('Begründung Kreuz auf dem Deckblatt', ),
+        P('Realisierungs- / Zeithorizont (entfällt bei Ablehnung des Antrags)', ),
+        P('Realisierungs- / Zeithorizont', ),
+        P('1.', ),
+        P('2.', ),
         P('Begründung', ),
         P('Begründung:', ),
-        P('2. Realisierungs- / Zeithorizont (entfällt bei Ablehnung des Antrags)', ),
         P('Zusammenfassung', ),
         P('Rechtliche Konsequenzen', )
     )
