@@ -1,4 +1,5 @@
-from app.database import connection, Session
+from app.database import connection
+from app.database.statements import query_index, make_index
 from app.graph import oparl_node_factory
 from app.oparl import Oparl
 from app.update_database import Updater
@@ -8,32 +9,16 @@ def scrapping(db_con, oparl_):
     updater = Updater()
     for item in oparl_.pagination():
         paper_node = oparl_node_factory(item)
+        x = db_con.driver.execute_query(*make_index())
+        y = db_con.driver.execute_query(*query_index('Thomas'))
         cypher = updater(paper_node)
         cypher.print()
         cypher.purge()
-        continue
-
-        with db_con.session() as session:
-            session: Session
-            # db_node: AbcOparlPaperInterface = session.execute_write(retrieve_single, node_paper)
-            # if db_node.modified == node_paper.modified: continue
-
-            session.execute_write(update_nodes_and_relations, paper_node, None)
-
-            '''
-            for director in paper_node.directors():
-                r = session.execute_write(create_relation, director)
-                pass
-            for originator in paper_node.originators():
-                r = session.execute_write(create_relation, originator)
-                pass
-            '''
 
 
 if __name__ == '__main__':
-    # with connection() as dbc:
-    oparl = Oparl()
-    scrapping(None, oparl)
+    with connection() as dbc:
+        scrapping(dbc, Oparl)
 
 # print(connection.driver.execute_query('match (n) return count(n)'))
-# connection.driver.close()
+# connection.driver.cose()
