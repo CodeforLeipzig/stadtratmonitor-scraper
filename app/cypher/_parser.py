@@ -18,9 +18,9 @@ class EntityParser:
         anchor = self._anchor
         return anchor if anchor else ''
 
-    def label_str(self):
+    def label_str(self, sep=':'):
         labels = self._item.labels if self._item else []
-        return ':' + ':'.join(labels) if labels else ''
+        return ':' + sep.join(labels) if labels else ''
 
     # noinspection PyProtectedMember
     def properties_str(self, kv_seperator: str, anchor_dot: bool):
@@ -49,14 +49,14 @@ class EntityParser:
 
     def curly_properties(self):
         params = self.properties_str(kv_seperator=':', anchor_dot=False)
-        return '{' + params + '}' if params else ''
+        return ' {' + params + '}' if params else ''
 
     def squared_properties(self):
         params = self.properties_str(kv_seperator='', anchor_dot=True)
         return '[' + params + ']' if params else ''
-    
-    def to_node(self):
-        anc, lab, cur = self.anchor_str(), self.label_str(), self.curly_properties()
+
+    def to_node(self, label_sep=':'):
+        anc, lab, cur = self.anchor_str(), self.label_str(label_sep), self.curly_properties()
         return f'({anc}{lab} {cur})'
 
     def to_relation(self):

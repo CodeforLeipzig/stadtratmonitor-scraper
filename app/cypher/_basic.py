@@ -35,6 +35,10 @@ class CypherBase(abstract.CypherABC):
         if anchor:
             self._anchors.add(anchor)
 
+    def add_lines(self, *lines: str):
+        for line in lines:
+            self._newline(line)
+
     def build(self) -> tuple[str, dict]:
         lines = '\n'.join((' '.join(line) for line in self._lines))
         parameter = self._parameters

@@ -1,6 +1,7 @@
 from ._basic import tag_generator
 from . import _chunks
 from . import abstract
+from ._index import Index
 
 
 class Cypher(
