@@ -48,3 +48,6 @@ class RelationFactory:
     def as_generator_with_class(self, cls):
         assert issubclass(cls, Relation)
         return lambda x: self.as_generator(x, cls=cls)
+
+    def key(self):
+        return self._relation_type
