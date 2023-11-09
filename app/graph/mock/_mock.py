@@ -5,6 +5,7 @@ class Property(_abc_entity.Property): ...
 
 
 class Node(_abc_entity.Node):
+    @property
     def add(self):
         return NodeSpace(self._attributes.append,
                          self._relations.append,
@@ -58,20 +59,30 @@ class RelationSpace(_abc_spaces.RelationDefinable):
 
 
 class PropertyFactory(_abc_factory.PropertyFactory):
-    _entity = Property
-    _space = _abc_factory._scheme.ATTRIBUTES
+    def __call__(self, value=None, is_primary=False):
+        factory = self._item
+        prop = Property(factory.key, lambda: value, is_primary)
+        if self._func: self._func(prop)
+        return prop
 
 
 class DefinedNodeFactory(_abc_factory.DefinedNodeFactory):
-    _entity = Node
-    _space = _abc_factory._scheme.NODES
+    def __call__(self, relations=(), properties=()):
+        node = Node(self._item, relations, properties)
+        if self._func: self._func(node)
+        return node
 
 
 class CustomNodeFactory(_abc_factory.LabelFactory):
-    _entity = Node
-    _space = _abc_factory._scheme.LABELS
+    def __call__(self, relations=(), properties=()):
+        node = Node(self._item, relations, properties)
+        if self._func: self._func(node)
+        return node
 
 
 class RelationFactory(_abc_factory.RelationFactory):
-    _entity = Relation
-    _space = _abc_factory._scheme.RELATIONS
+    def __call__(self, source=None, target=None, properties=()):
+        factory = self._item
+        relation = Relation(factory.key(), source, target, properties)
+        if self._func: self._func(relation)
+        return relation

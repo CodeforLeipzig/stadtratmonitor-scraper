@@ -42,7 +42,7 @@ class RelationDefinable(ABC):
     def __init__(self, set_target=None, set_source=None, add_property=None):
         self.target = self._target(set_target)
         self.source = self._source(set_source)
-        self.property = self._property.PropertyFactory(add_property)
+        self.property = self._property(add_property)
 
     @property
     @abstractmethod

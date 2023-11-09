@@ -5,63 +5,40 @@ from .. import _scheme
 
 class AbstractFactory(ABC):
     _entity: type
-    _space: object
+    _namespace: type
+    _item: object
+    _func: callable
 
     def __init__(self, func=None):
-        self._func: callable = func
+        self._func = func
 
     @abstractmethod
-    def _create(self, item):
+    def __call__(self, *args, **kwargs):
         ...
 
-    def __getattr__(self, item):
-        try:
-            item = getattr(self._space, item)
-            return self._create(item)
-        except Exception:
+    def __getattribute__(self, item: str):
+        if item.startswith('_'):
             return object.__getattribute__(self, item)
+        else:
+            self._item = getattr(self._namespace, item)
+            return self.__call__
 
 
-class PropertyFactory(AbstractFactory, ABC):
-    def _create(self, item):
-        def creator(value=None, is_primary=False):
-            prop = item(lambda *_: value, is_primary).fget(None)
-            if self._func: self._func(prop)
-            return prop
-
-        return creator
+class PropertyFactory(_scheme.ATTRIBUTES, AbstractFactory, ABC):
+    _entity: type[_abc_entity.Node]
+    _namespace = _scheme.ATTRIBUTES
 
 
 class DefinedNodeFactory(_scheme.NODES, AbstractFactory, ABC):
-    _entity: type[_abc_entity.Node] = None
-
-    def _create(self, item):
-        def creator(relations=(), properties=()):
-            node = self._entity(item, relations, properties)
-            if self._func: self._func(node)
-            return node
-
-        return creator
+    _entity: type[_abc_entity.Node]
+    _namespace = _scheme.NODES
 
 
 class LabelFactory(_scheme.LABELS, AbstractFactory, ABC):
     _entity = type[_abc_entity.Node]
-
-    def _create(self, item):
-        if self._func:
-            self._func(item)
-            return self
-        else:
-            return self._entity((item,))
+    _namespace = _scheme.LABELS
 
 
 class RelationFactory(_scheme.RELATIONS, AbstractFactory, ABC):
     _entity: type[_abc_entity.Relation]
-
-    def _create(self, item):
-        def creator(source=None, target=None, properties=()):
-            relation = item(lambda *_: (source, target, properties), cls=self._entity).fget(None)
-            if self._func: self._func(relation)
-            return relation
-
-        return creator
+    _namespace = _scheme.RELATIONS
