@@ -75,7 +75,7 @@ class DefinedNodeFactory(_abc_factory.DefinedNodeFactory):
 
 class CustomNodeFactory(_abc_factory.LabelFactory):
     def __call__(self, relations=(), properties=()):
-        node = Node(self._item, relations, properties)
+        node = Node((self._item,), relations, properties)
         if self._func: self._func(node)
         return node
 
