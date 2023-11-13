@@ -19,9 +19,10 @@ class Database:
         self.session = self.driver.session
 
 
+database = Database(**neo4j_config())
+
 @contextmanager
 def database_connection():
-    database = Database(**neo4j_config())
     exception: (Exception, None) = None
     try:
         yield database
