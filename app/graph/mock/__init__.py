@@ -1,8 +1,8 @@
 from . import _mock
-from .. import _scheme
+from .. import schema
 
 # noinspection PyTypeChecker
-Property: _scheme.ATTRIBUTES = _mock.PropertyFactory()
-DefinedNode: _scheme.NODES = _mock.DefinedNodeFactory()
-CustomNode: _scheme.LABELS = _mock.CustomNodeFactory()
-Relation: _scheme.RELATIONS = _mock.RelationFactory()
+Property: schema.ATTRIBUTES = _mock.PropertyFactory()
+DefinedNode: schema.NODES = _mock.DefinedNodeFactory()
+CustomNode: schema.LABELS = _mock.CustomNodeFactory()
+Relation: schema.RELATIONS = _mock.RelationFactory()

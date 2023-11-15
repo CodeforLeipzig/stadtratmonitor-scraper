@@ -1,4 +1,4 @@
-from ._scheme import RELATIONS, ATTRIBUTES
+from .schema import RELATIONS, ATTRIBUTES
 from ._entity import Node
 from . import _interfaces as ifs
 from .. import oparl

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from . import _abc_entity
-from .. import _scheme
+from .. import schema
 
 
 class AbstractFactory(ABC):
@@ -24,21 +24,21 @@ class AbstractFactory(ABC):
             return self.__call__
 
 
-class PropertyFactory(_scheme.ATTRIBUTES, AbstractFactory, ABC):
+class PropertyFactory(schema.ATTRIBUTES, AbstractFactory, ABC):
     _entity: type[_abc_entity.Node]
-    _namespace = _scheme.ATTRIBUTES
+    _namespace = schema.ATTRIBUTES
 
 
-class DefinedNodeFactory(_scheme.NODES, AbstractFactory, ABC):
+class DefinedNodeFactory(schema.NODES, AbstractFactory, ABC):
     _entity: type[_abc_entity.Node]
-    _namespace = _scheme.NODES
+    _namespace = schema.NODES
 
 
-class LabelFactory(_scheme.LABELS, AbstractFactory, ABC):
+class LabelFactory(schema.LABELS, AbstractFactory, ABC):
     _entity = type[_abc_entity.Node]
-    _namespace = _scheme.LABELS
+    _namespace = schema.LABELS
 
 
-class RelationFactory(_scheme.RELATIONS, AbstractFactory, ABC):
+class RelationFactory(schema.RELATIONS, AbstractFactory, ABC):
     _entity: type[_abc_entity.Relation]
-    _namespace = _scheme.RELATIONS
+    _namespace = schema.RELATIONS

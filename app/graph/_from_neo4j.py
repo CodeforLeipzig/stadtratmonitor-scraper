@@ -1,6 +1,6 @@
 from neo4j.graph import Node
 
-from ._scheme import \
+from .schema import \
     ATTRIBUTES
 
 from ._interfaces import \

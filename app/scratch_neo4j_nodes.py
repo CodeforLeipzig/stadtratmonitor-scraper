@@ -1,6 +1,6 @@
 from app.database import connection
 from app.cypher import Cypher
-from app.graph import mock, _scheme, oparl_node_factory
+from app.graph import mock, schema, oparl_node_factory
 from app.oparl import Oparl
 
 o_node = oparl_node_factory(Oparl.pagination().__next__())
@@ -18,8 +18,8 @@ n = n[0][0]['n']
 
 def find_and_create_attributes(items):
     for key, value in items:
-        for property_factory in _scheme.ATTRIBUTES.__dict__.values():
-            if isinstance(property_factory, _scheme.PropertyFactory) and key == property_factory.key():
+        for property_factory in schema.ATTRIBUTES.items():
+            if key == property_factory.key():
                 mock.Property._item = property_factory
                 yield mock.Property(value)
 
@@ -44,8 +44,8 @@ r = r[0][0]['r']
 
 
 def create_relation(label, start_node, end_node, items):
-    for relation_factory in _scheme.RELATIONS.__dict__.values():
-        if isinstance(relation_factory, _scheme.RelationFactory) and label == relation_factory.key():
+    for relation_factory in schema.RELATIONS.items():
+        if label == relation_factory.key():
             mock.Relation._item = relation_factory
             start_node = create_node(start_node.labels, start_node.items())
             end_node = create_node(end_node.labels, end_node.items())

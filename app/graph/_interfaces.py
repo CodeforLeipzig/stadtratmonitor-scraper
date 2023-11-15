@@ -1,7 +1,7 @@
 import datetime as dt
 from abc import abstractmethod
 from ._entity import Node, Relation
-from ._scheme import NODES
+from .schema import NODES
 
 
 class LegislativeTerm(Node):
