@@ -1,8 +1,6 @@
-import typing
+from app.almanac.book.oparl import OPARL_KEY, singleton
 
-from ...almanac.oparl import KEY, singleton
-
-from .propertyfactory import PropertyFactory
+from .factory import OparlProperty
 from .converter import *
 
 
@@ -10,9 +8,9 @@ from .converter import *
 class PropertyStore:
     def __init__(self):
         for key, work in filter(lambda x: not x[0].startswith('_'), self.__class__.__dict__.items()):
-            property_key = getattr(KEY, key)
+            property_key = getattr(OPARL_KEY, key)
             work = work if isinstance(work, typing.Iterable) else (work, )
-            setattr(self, key, PropertyFactory(property_key, *work))
+            setattr(self, key, OparlProperty(property_key, *work))
 
     ACCESS_URL = to_str
     AGENDA_ITEM: object = always_none
@@ -32,7 +30,7 @@ class PropertyStore:
     GENDER = to_str
     GIVEN_NAME = to_str
     ID = to_str
-    LOCATION_OBJECT = to_object
+    LOCATION_OBJECT = ConverterConnector
     LOCATION = to_object
     LOCALITY = to_str
     MAIN_FILE = to_object
