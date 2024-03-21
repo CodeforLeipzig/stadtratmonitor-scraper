@@ -1,11 +1,12 @@
 import abc
 import typing
 
-from .. import labour
-from ...almanac.craft import CRAFT
+from app.almanac.book.craft import CRAFT
+
+from ..labour import AbcMinion, AbcSupervisor
 
 
-class AbcGraphRequest(labour.AbcMinion, abc.ABC, badge=CRAFT.GRAPH_REQUEST):
+class AbcGraphRequest(AbcMinion, abc.ABC, badge=CRAFT.GRAPH_REQUEST):
     """Defines Interface for requests against graph database."""
 
     @abc.abstractmethod
@@ -18,7 +19,7 @@ class AbcGraphRequest(labour.AbcMinion, abc.ABC, badge=CRAFT.GRAPH_REQUEST):
     def upsert(self, entity: typing.Any) -> typing.Awaitable: ...
 
 
-class AbcManufactory(labour.AbcSupervisor, abc.ABC, badge=CRAFT.MANUFACTORY):
+class AbcManufactory(AbcSupervisor, abc.ABC, badge=CRAFT.MANUFACTORY):
     """Defines main instance that holds workers of coroutines, threads and processes"""
     ...
 

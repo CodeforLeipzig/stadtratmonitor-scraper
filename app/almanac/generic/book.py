@@ -1,8 +1,8 @@
-from .entitled import Entitled
-from .initilized import Initialized
+from .initialisable import Initialisable
+from .entitlable import Entitlable
 
 
-def overwrite[T](cls: type[T]) -> T:
+def singleton[T](cls: type[T]) -> T:
     """decorator to create pseudo singleton"""
     return cls()
 
@@ -12,20 +12,14 @@ def init_annotations(cls: type):
         setattr(cls, key, type_(key))
 
 
-class Book(Initialized):
+class Book(Initialisable):
     def __setattr__(self, key, value):
         raise AttributeError('This is not a note book. Please don´t write into it.')
 
     def __getitem__[T](self, item: T) -> T:
         item = item.BADGE if (
-                isinstance(item, Entitled) or
-                isinstance(item, type) and issubclass(item, Entitled)
+                isinstance(item, Entitlable) or
+                isinstance(item, type) and issubclass(item, Entitlable)
                 ) else str(item)
 
-        if hasattr(self, item):
-            return getattr(self, item)
-
-
-class Constant(str):
-    """subclass from str, just for enabling ´is´ comparator"""
-
+        return getattr(self, item, None)

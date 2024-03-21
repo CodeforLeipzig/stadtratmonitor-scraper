@@ -1,8 +1,8 @@
-from .basic import book
+from ..generic import Book, Constant, singleton, init_annotations
 
 
-@book.overwrite
-class LABEL(book.Book):
+@singleton
+class LABEL(Book):
     CONSULTATION = 'Consultation'
     LEGIS_TERM = 'LegisTerm'
     LOCATION = 'Location'
@@ -18,8 +18,8 @@ L = LABEL
 
 
 # noinspection PyPep8Naming
-@book.overwrite
-class NODE_LABEL(book.Book):
+@singleton
+class NODE_LABEL(Book):
     LEGISLATIVE_TERM = (L.OPARL, L.LEGIS_TERM)
     THREAD = (L.OPARL, L.THREAD)
     PAPER = (L.OPARL, L.PAPER)
@@ -30,8 +30,8 @@ class NODE_LABEL(book.Book):
 
 
 # noinspection PyPep8Naming
-@book.overwrite
-class RELATION_TYPE(book.Book):
+@singleton
+class RELATION_TYPE(Book):
     CONCERNED = 'CONCERNED'  # Consultation -> Paper -> Thread
     DIRECTED = 'DIRECTED'  # Organization | Person -> Paper
     IN_PERIOD = 'IN_PERIOD'  # Thread -> Legis_term
@@ -42,8 +42,8 @@ class RELATION_TYPE(book.Book):
 
 
 # noinspection PyPep8Naming
-@book.overwrite
-class PROPERTY_KEY(book.Book):
+@singleton
+class PROPERTY_KEY(Book):
     AUTHORITATIVE = 'authoritative'
     CLASSIFICATION = 'classification'
     DESCRIPTION = 'description'

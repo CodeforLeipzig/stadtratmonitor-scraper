@@ -1,11 +1,12 @@
 import abc
 import typing
 
-from .. import labour
-from ...almanac.craft import CRAFT
+from app.almanac.book.craft import CRAFT
+
+from ..labour import AbcMediator, AbcMinion
 
 
-class AbcHttpRequest(labour.AbcMediator, abc.ABC, badge=CRAFT.HTTP_REQUEST):
+class AbcHttpRequest(AbcMediator, abc.ABC, badge=CRAFT.HTTP_REQUEST):
     """Defines interface for http request. Is a host for worker. Should only be used within oparl request"""
 
     @abc.abstractmethod
@@ -21,6 +22,5 @@ class AbcHttpRequest(labour.AbcMediator, abc.ABC, badge=CRAFT.HTTP_REQUEST):
     def get_pdf(self, url) -> typing.Awaitable[bytes]: ...
 
 
-class AbcHttpRequestMinion(labour.AbcMinion, abc.ABC, badge=CRAFT.HTTP_REQUEST_MINION):
+class AbcHttpRequestMinion(AbcMinion, abc.ABC, badge=CRAFT.HTTP_REQUEST_MINION):
     """Defines worker for multiple http requests."""
-    ...

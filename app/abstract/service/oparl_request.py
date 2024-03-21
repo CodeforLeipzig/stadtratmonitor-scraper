@@ -1,9 +1,9 @@
 import abc
 
-from .. import labour
-from ...almanac.craft import CRAFT
+from app.almanac.book.craft import CRAFT
+
+from .. labour import AbcMinion
 
 
-class AbcOparlRequest(labour.AbcMediator, abc.ABC, badge=CRAFT.OPARL_REQUEST):
+class AbcOparlRequest(AbcMinion, abc.ABC, badge=CRAFT.OPARL_REQUEST):
     """Defines interface that delegates requests to http or mirror"""
-    ...

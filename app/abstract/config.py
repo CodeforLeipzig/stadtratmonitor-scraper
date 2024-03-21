@@ -1,35 +1,31 @@
 import abc
+from ..almanac import Entitlable
 
 
-class AbcConfig(abc.ABC):
-    # @abc.abstractmethod
-    # def __init_subclass__(cls) -> None:
-    #     """registers config class at config store"""
-    #     ...
-
-    @property
+class AbcConfig(Entitlable, abc.ABC):
     @abc.abstractmethod
-    def name(self) -> str:
-        """it´s a fairly new concept: with a name one can ask for it."""
-        ...
+    def __init__(self, cnf: dict): ...
 
+    @classmethod
     @abc.abstractmethod
-    def dump(self) -> list[str]:
+    def dump(cls) -> list[str]:
         """generates a toml like representation for generating a (empty) config file"""
         ...
 
 
 class AbcConfigStore(type, abc.ABC):
     @abc.abstractmethod
-    def __getitem__(self, item: str) -> AbcConfig:
+    def __class_getitem__(cls, item: str) -> AbcConfig:
         """finds a config by it´s name"""
 
+    @classmethod
     @abc.abstractmethod
-    def dump(self, name: str) -> None:
+    def dump(cls, name: str) -> None:
         """stores an (empty) config file generated from registered config classes"""
 
+    @classmethod
     @abc.abstractmethod
-    def load(self) -> None:
+    def load(cls) -> None:
         """loads a toml config file"""
 
     @classmethod

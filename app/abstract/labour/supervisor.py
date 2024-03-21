@@ -12,7 +12,7 @@ class AbcSupervisor(AbcLabour, abc.ABC):
         ...
 
     @abc.abstractmethod
-    def __getitem__(self, item) -> AbcLabour:
+    def __getitem__[T](self, item: typing.Union[type[T], T, str]) -> T:
         """a supervisor has supervision, so it can find other things"""
         ...
 

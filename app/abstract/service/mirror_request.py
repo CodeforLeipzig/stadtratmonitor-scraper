@@ -1,11 +1,12 @@
 import abc
 import typing
 
-from .. import labour
-from ...almanac.craft import CRAFT
+from app.almanac.book.craft import CRAFT
+
+from ..labour import AbcMinion
 
 
-class AbcMirrorRequest(labour.AbcMinion, abc.ABC, badge=CRAFT.MIRROR_REQUEST):
+class AbcMirrorRequest(AbcMinion, abc.ABC, badge=CRAFT.MIRROR_REQUEST):
     """Defines interface for requests against mirror db. Should only be used within oparl request"""
 
     @abc.abstractmethod
