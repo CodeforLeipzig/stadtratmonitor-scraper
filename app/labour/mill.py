@@ -14,11 +14,9 @@ class BasicMill(BasicMinion, AbcMill, abc.ABC):
     @abc.abstractmethod
     def init_queue(self) -> asyncio.Queue: ...
 
+    @property
+    def queue(self):
+        return self.__queue
+
     def put(self, item) -> typing.Awaitable:
         return self.__queue.put(item)
-
-    def get[T](self) -> typing.Optional[T]:
-        try:
-            return self.__queue.get_nowait()
-        except asyncio.QueueEmpty:
-            return None

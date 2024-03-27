@@ -13,22 +13,19 @@ class AbcConfig(Entitlable, abc.ABC):
         ...
 
 
-class AbcConfigStore(type, abc.ABC):
+class AbcConfigStore(abc.ABC):
     @abc.abstractmethod
-    def __class_getitem__(cls, item: str) -> AbcConfig:
+    def __getitem__(self, item: str) -> AbcConfig:
         """finds a config by it´s name"""
 
-    @classmethod
     @abc.abstractmethod
-    def dump(cls, name: str) -> None:
+    def dump(self, name: str) -> None:
         """stores an (empty) config file generated from registered config classes"""
 
-    @classmethod
     @abc.abstractmethod
-    def load(cls) -> None:
+    def load(self) -> None:
         """loads a toml config file"""
 
-    @classmethod
     @abc.abstractmethod
-    def register(cls, config: type[AbcConfig]) -> None:
+    def register(self, config: type[AbcConfig]) -> None:
         """it registers a config class, could see it coming"""

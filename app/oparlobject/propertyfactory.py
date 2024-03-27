@@ -1,7 +1,7 @@
 import typing
 from functools import reduce
 
-from ...abstract.oparl import AbcOparlObject, AbcOparlProperty
+from app.abstract.oparl import AbcOparlObject, AbcOparlProperty
 
 
 class OparlProperty(AbcOparlProperty):

@@ -19,7 +19,7 @@ class AbcLabour(Entitlable, abc.ABC):
 
     @property
     @abc.abstractmethod
-    def status(self) -> str:
+    def status(self):
         """but be kind, ask them how they are"""
 
     @abc.abstractmethod

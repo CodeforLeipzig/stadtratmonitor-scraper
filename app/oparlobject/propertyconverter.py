@@ -1,8 +1,8 @@
 import datetime
 import typing
 
-from ...abstract.oparl.oparlobject import AbcOparlObject
-from ...almanac import singleton
+from app.abstract.oparl.oparlobject import AbcOparlObject
+from app.almanac import singleton
 
 
 @singleton
@@ -17,8 +17,12 @@ def always_none(*_) -> None:
     return None
 
 
+def to_object(item):
+    return Connector.oparl_factory(item)
+
+
 def to_object_generator(item) -> typing.Iterable[AbcOparlObject]:
-    objects = (Connector.oparl_factory(sub) for sub in to_generator(item))
+    objects = (to_object(sub) for sub in to_generator(item))
     yield from filter(lambda x: x is not None, objects)
 
 

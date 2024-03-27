@@ -2,7 +2,7 @@ import abc
 import typing
 
 from ..abstract.labour import AbcSupervisor, AbcLabour
-from app.almanac.book.status import STATUS
+from app.almanac.status import Status
 
 from .labour import BasicLabour
 
@@ -33,12 +33,11 @@ class BasicSupervisor(BasicLabour, AbcSupervisor, abc.ABC):
         yield from self.__minions
 
     @property
-    def status(self) -> str:
-        if status := super().status is STATUS.IDLE:
-            for minion in self.__minions:
-                if minion.status is STATUS.BUSY:
-                    return STATUS.BUSY
-        return status
+    def status(self) -> Status:
+        for minion in self.__minions:
+            if minion.status.is_busy():
+                return minion.status
+        return super().status
 
     def stop(self) -> None:
         for minion in self.__minions:

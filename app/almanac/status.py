@@ -1,12 +1,11 @@
+from contextlib import contextmanager
+
 from .book.status import STATUS
 
 
 class Status:
     def __init__(self):
         self.__status = STATUS.INITIALIZED
-
-    def __call__(self, *args, **kwargs):
-        return self.__status
 
     def __enter__(self):
         self.__status = STATUS.IDLE
@@ -18,14 +17,29 @@ class Status:
     def __eq__(self, other):
         return self.__status == (other.__status if type(other) is Status else other)
 
-    def set_idle(self):
-        self.__status = STATUS.IDLE
-
-    def set_busy(self):
-        self.__status = STATUS.BUSY
+    def get(self) -> str:
+        return self.__status
 
     def is_idle(self):
         return self.__status == STATUS.IDLE
 
     def is_busy(self):
         return self.__status == STATUS.BUSY
+
+    def is_initialized(self):
+        return self.__status == STATUS.INITIALIZED
+
+    def is_stopped(self):
+        return self.__status == STATUS.STOPPED
+
+    @contextmanager
+    def idle_and_stopped_cnx(self):
+        self.__status = STATUS.IDLE
+        yield
+        self.__status = STATUS.STOPPED
+
+    @contextmanager
+    def busy_and_idle_cnx(self):
+        self.__status = STATUS.BUSY
+        yield
+        self.__status = STATUS.IDLE

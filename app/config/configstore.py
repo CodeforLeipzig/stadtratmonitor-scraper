@@ -2,39 +2,40 @@ import tomllib
 import typing
 
 from ..abstract.config import AbcConfig, AbcConfigStore
-from ..almanac import Entitlable
+from ..almanac import Entitlable, singleton
 
 
+@singleton
 class Configstore(AbcConfigStore):
     workdir = '.'
     filename = 'config.toml'
 
-    __registered: list[type[AbcConfig]] = []
-    __config: dict[str, AbcConfig] = {}
+    def __init__(self):
+        super().__init__()
+        self.__registered: list[type[AbcConfig]] = []
+        self.__config: dict[str, AbcConfig] = {}
 
-    def __class_getitem__(cls, item: typing.Union[str, Entitlable, type[Entitlable]]) -> AbcConfig:
-        if isinstance(item, Entitlable) or isinstance(item, type) and issubclass(item, Entitlable):
-            item = item.BADGE
-        return cls.__config.get(item)
+    def __getitem__(self, item: typing.Union[str, Entitlable, type[Entitlable]]) -> AbcConfig:
+        badge = getattr(item, 'BADGE', None)
+        return self.__config.get(badge) if badge else self.__config.get(item)
 
-    @classmethod
-    def dump(cls, name: str) -> None:
-        with open(f'{cls.workdir}/{name}.toml', 'w') as file:
-            for config in cls.__registered:
+    def dump(self, name: str) -> None:
+        with open(f'{self.workdir}/{name}.toml', 'w') as file:
+            for config in self.__registered:
                 file.writelines(config.dump())
 
-    @classmethod
-    def load(cls, name: str = None) -> None:
-        name = f'{name}.toml' if name else cls.filename
-        with open(f'{cls.workdir}/{name}', 'rb') as file:
+    def load(self, name: str = None) -> None:
+        name = f'{name}.toml' if name else self.filename
+        with open(f'{self.workdir}/{name}', 'rb') as file:
             config: dict[str, dict] = tomllib.load(file)
-            cls.__config.update(
-                ((cnf_type.BADGE, cnf_type(config.get(cnf_type.BADGE)))
-                 for cnf_type in cls.__registered)
-            )
+        self.__config.update(
+            ((cnf_type.BADGE, cnf_type(config.get(cnf_type.BADGE)))
+             for cnf_type in self.__registered)
+        )
 
-    @classmethod
-    def register(cls, cnf_type: type[AbcConfig]) -> None:
+    def register(self, cnf_type: type[AbcConfig]) -> None:
         assert issubclass(cnf_type, AbcConfig)
-        cls.__registered.append(cnf_type)
+        self.__registered.append(cnf_type)
 
+
+Configstore: Configstore

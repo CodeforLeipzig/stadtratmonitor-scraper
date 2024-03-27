@@ -1,7 +1,7 @@
 from app.almanac.book.oparl import OPARL_KEY, singleton
 
-from .factory import OparlProperty
-from .converter import *
+from .propertyfactory import OparlProperty
+from .propertyconverter import *
 
 
 @singleton
@@ -30,7 +30,7 @@ class PropertyStore:
     GENDER = to_str
     GIVEN_NAME = to_str
     ID = to_str
-    LOCATION_OBJECT = ConverterConnector
+    LOCATION_OBJECT = to_object
     LOCATION = to_object
     LOCALITY = to_str
     MAIN_FILE = to_object

@@ -1,7 +1,7 @@
 import inspect
 
-from ...abstract.oparl import AbcOparlObject, AbcOparlProperty
-from ..property.store import PropertyStore
+from app.abstract.oparl import AbcOparlObject, AbcOparlProperty
+from app.oparlobject.propertystore import PropertyStore
 
 
 class OparlObject(AbcOparlObject):

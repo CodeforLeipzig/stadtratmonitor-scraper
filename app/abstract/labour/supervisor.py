@@ -16,3 +16,7 @@ class AbcSupervisor(AbcLabour, abc.ABC):
         """a supervisor has supervision, so it can find other things"""
         ...
 
+    @abc.abstractmethod
+    def get_item[T](self, item: typing.Union[type[T], T, str]) -> T:
+        """a supervisor has supervision, so it can find other things"""
+        ...

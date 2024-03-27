@@ -1,10 +1,10 @@
 from ..abstract.oparl import *
 
-from .object.object import OparlObject
-from .object.factory import OparlFactory
-from .property import converter
+from app.oparlobject.oparlobject import OparlObject
+from app.oparlobject.oparlfactory import OparlFactory
+from . import propertyconverter
 
-converter.ConverterConnector.oparl_factory = OparlFactory
+propertyconverter.Connector.oparl_factory = OparlFactory
 
 
 class Consultation(OparlObject, AbcConsultation, factory=OparlFactory): ...
